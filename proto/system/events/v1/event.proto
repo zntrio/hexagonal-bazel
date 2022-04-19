@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package cloud.system.events.v1;
+
+option go_package = "zntr.io/hexagonal-bazel/api/system/events/v1;eventsv1";
+
+import "google/protobuf/any.proto";
+
+message Event {
+    string event_id = 1;
+    string event_type = 2;
+    google.protobuf.Any payload = 3;
+}

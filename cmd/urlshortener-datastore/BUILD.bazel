@@ -1,0 +1,22 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "urlshortener-datastore_lib",
+    srcs = ["main.go"],
+    importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-datastore",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//api/urlshortener/v1:urlshortener",
+        "//cmd/urlshortener-datastore/server",
+        "//infrastructure/broker",
+        "//infrastructure/datastore/badger",
+        "@com_github_timshannon_badgerhold_v4//:badgerhold",
+        "@org_golang_google_grpc//:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "urlshortener-datastore",
+    embed = [":urlshortener-datastore_lib"],
+    visibility = ["//visibility:public"],
+)

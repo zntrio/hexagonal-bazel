@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package cloud.system.errors.v1;
+
+option go_package = "zntr.io/hexagonal-bazel/api/system/errors/v1;errorsv1";
+
+message Error {
+    string error_message = 1;
+    uint32 error_code = 2;
+}

@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package cloud.urlshortener.v1;
+
+option go_package = "zntr.io/hexagonal-bazel/api/urlshortener/v1;urlshortenerv1";
+
+import "system/errors/v1/error.proto";
+import "urlshortener/v1/entity.proto";
+
+service ShortenerAPI {
+    // Create a shortened link from the given URL.
+    rpc Create(CreateRequest) returns (CreateResponse) {};
+    // Resolve the shortened URL.
+    rpc Resolve(ResolveRequest) returns (ResolveResponse) {};
+}
+
+message CreateRequest {
+    string url = 1;
+    bool validate_only = 99;
+}
+
+message CreateResponse {
+    .cloud.system.errors.v1.Error error = 1;
+    Link link = 2;
+}
+
+message ResolveRequest {
+    string id = 1;
+}
+
+message ResolveResponse {
+    .cloud.system.errors.v1.Error error = 1;
+    Link link = 2;
+}

@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "broker",
+    srcs = [
+        "console.go",
+        "noop.go",
+    ],
+    importpath = "zntr.io/hexagonal-bazel/infrastructure/broker",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/system/events/v1:events",
+        "//pkg/eventbus",
+    ],
+)

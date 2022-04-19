@@ -1,0 +1,19 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "router",
+    srcs = [
+        "create_link.go",
+        "helpers.go",
+        "resolve_link.go",
+    ],
+    importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-api/router",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/urlshortener/v1:urlshortener",
+        "//pkg/serr",
+        "//pkg/types",
+        "@com_github_go_chi_chi_v5//:chi",
+        "@org_golang_google_grpc//:go_default_library",
+    ],
+)

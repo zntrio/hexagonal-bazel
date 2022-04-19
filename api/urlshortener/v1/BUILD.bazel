@@ -1,0 +1,20 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "urlshortener",
+    srcs = [
+        "entity.pb.go",
+        "service.pb.go",
+        "service_grpc.pb.go",
+    ],
+    importpath = "zntr.io/hexagonal-bazel/api/urlshortener/v1",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/system/errors/v1:errors",
+        "@org_golang_google_grpc//:go_default_library",
+        "@org_golang_google_grpc//codes",
+        "@org_golang_google_grpc//status",
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+    ],
+)

@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "badger",
+    srcs = ["link.go"],
+    importpath = "zntr.io/hexagonal-bazel/infrastructure/datastore/badger",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//domain/urlshortener/link",
+        "@com_github_timshannon_badgerhold_v4//:badgerhold",
+    ],
+)
