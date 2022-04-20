@@ -25,14 +25,16 @@ type linkRepository struct {
 // -----------------------------------------------------------------------------
 
 type linkEntity struct {
-	ID  string `json:"id"`
-	URL string `json:"url"`
+	ID         string `json:"id"`
+	URL        string `json:"url"`
+	SecretHash string `json:"secret_hash"`
 }
 
 var _ link.Link = (*linkEntity)(nil)
 
-func (e *linkEntity) GetID() link.ID { return link.ID(e.ID) }
-func (e *linkEntity) GetURL() string { return e.URL }
+func (e *linkEntity) GetID() link.ID        { return link.ID(e.ID) }
+func (e *linkEntity) GetURL() string        { return e.URL }
+func (e *linkEntity) GetSecretHash() string { return e.SecretHash }
 
 // -----------------------------------------------------------------------------
 
@@ -52,8 +54,9 @@ func (r *linkRepository) GetByID(ctx context.Context, id link.ID) (link.Link, er
 func (r *linkRepository) Save(ctx context.Context, domain link.Link) error {
 	// Convert to entity
 	entity := &linkEntity{
-		ID:  string(domain.GetID()),
-		URL: domain.GetURL(),
+		ID:         string(domain.GetID()),
+		URL:        domain.GetURL(),
+		SecretHash: domain.GetSecretHash(),
 	}
 
 	// Insert or update.

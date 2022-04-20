@@ -1,46 +1,18 @@
 package link
 
-import (
-	"sync"
-	"time"
-
-	"github.com/teris-io/shortid"
-)
-
-var (
-	sid  *shortid.Shortid
-	once sync.Once
-)
-
-func init() {
-	once.Do(func() {
-		var err error
-		sid, err = shortid.New(1, shortid.DefaultABC, uint64(time.Now().Unix()))
-		if err != nil {
-			panic(err)
-		}
-
-		// Assign as default instance
-		shortid.SetDefault(sid)
-	})
-}
-
-// NewID generates a new shortened link public identifier.
-func NewID() ID {
-	return ID(sid.MustGenerate())
-}
-
 // defaultLink implements the Link domain object interface.
 type defaultLink struct {
-	id  ID
-	url string
+	id         ID
+	url        string
+	secretHash string
 }
 
 // Compile-time assertion to enforce type implementation.
 var _ Link = (*defaultLink)(nil)
 
-func (d *defaultLink) GetID() ID      { return d.id }
-func (d *defaultLink) GetURL() string { return d.url }
+func (d *defaultLink) GetID() ID             { return d.id }
+func (d *defaultLink) GetURL() string        { return d.url }
+func (d *defaultLink) GetSecretHash() string { return d.secretHash }
 
 // -----------------------------------------------------------------------------
 
@@ -58,6 +30,13 @@ func WithID(id ID) DomainOption {
 func WithURL(url string) DomainOption {
 	return func(dopts *defaultLink) {
 		dopts.url = url
+	}
+}
+
+// WithSecretHash sets the domain object secret hash property.
+func WithSecretHash(value string) DomainOption {
+	return func(dopts *defaultLink) {
+		dopts.secretHash = value
 	}
 }
 

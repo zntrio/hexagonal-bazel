@@ -16,6 +16,8 @@ service ShortenerAPI {
 
 message CreateRequest {
     string url = 1;
+    optional string secret = 2;
+    optional uint64 expiration = 3;
     bool validate_only = 99;
 }
 
@@ -26,6 +28,7 @@ message CreateResponse {
 
 message ResolveRequest {
     string id = 1;
+    optional string secret = 2;
 }
 
 message ResolveResponse {

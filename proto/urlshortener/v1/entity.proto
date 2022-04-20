@@ -9,5 +9,7 @@ message Link {
     // Public link identifier. 
     string id = 1;
     // Complete URL aliases by the short-link.
-    string url = 2;
+    optional string url = 2;
+    // Link is password protected?
+    bool secret_required = 3;
 }

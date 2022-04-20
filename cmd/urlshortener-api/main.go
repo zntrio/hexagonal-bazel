@@ -40,6 +40,7 @@ func main() {
 	r.Route("/api/v1", func(sr chi.Router) {
 		sr.Post("/links", router.CreateLink(dsClient))
 		sr.Get("/links/{id}", router.ResolveLink(dsClient))
+		sr.Post("/links/{id}", router.ResolveSecretLink(dsClient))
 	})
 
 	http.ListenAndServe(":3000", r)

@@ -5,14 +5,16 @@ import (
 
 	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
+	"zntr.io/hexagonal-bazel/infrastructure/generator"
+	"zntr.io/hexagonal-bazel/infrastructure/security/password"
 	"zntr.io/hexagonal-bazel/pkg/eventbus"
 )
 
-func New(store link.Repository, publisher eventbus.EventPublisher) urlshortenerv1.ShortenerAPIServer {
+func New(store link.Repository, publisher eventbus.EventPublisher, codeGenerator generator.Generator[string], secretStrategy password.Strategy) urlshortenerv1.ShortenerAPIServer {
 	// No error
 	return &urlShortenerServer{
-		createHandler:  link.CreateHandler(store, publisher),
-		resolveHandler: link.ResolveHandler(store),
+		createHandler:  link.CreateHandler(store, publisher, codeGenerator, secretStrategy),
+		resolveHandler: link.ResolveHandler(store, secretStrategy),
 	}
 }
 

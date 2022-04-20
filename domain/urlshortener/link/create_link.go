@@ -10,12 +10,15 @@ import (
 
 	errorsv1 "zntr.io/hexagonal-bazel/api/system/errors/v1"
 	urlshortener "zntr.io/hexagonal-bazel/api/urlshortener/v1"
+	"zntr.io/hexagonal-bazel/infrastructure/generator"
+	"zntr.io/hexagonal-bazel/infrastructure/security/password"
 	"zntr.io/hexagonal-bazel/pkg/eventbus"
 	"zntr.io/hexagonal-bazel/pkg/reactor"
+	"zntr.io/hexagonal-bazel/pkg/types"
 )
 
 // CreateHandler handles the urlshortener.Create request.
-func CreateHandler(links Repository, publisher eventbus.EventPublisher) reactor.Handler[urlshortener.CreateRequest, urlshortener.CreateResponse] {
+func CreateHandler(links Repository, publisher eventbus.EventPublisher, codeGenerator generator.Generator[string], secretEncoder password.Hasher) reactor.Handler[urlshortener.CreateRequest, urlshortener.CreateResponse] {
 	return func(ctx context.Context, req *urlshortener.CreateRequest) (*urlshortener.CreateResponse, error) {
 		var res urlshortener.CreateResponse
 
@@ -51,13 +54,42 @@ func CreateHandler(links Repository, publisher eventbus.EventPublisher) reactor.
 			return &res, nil
 		}
 
-		// Create a new Link.
-		domainObject := New(
+		// Create a public identifier
+		code, err := codeGenerator.Generate()
+		if err != nil {
+			res.Error = &errorsv1.Error{
+				ErrorMessage: "Unable to generate shortened identifier.",
+				ErrorCode:    http.StatusInternalServerError,
+			}
+			return &res, nil
+		}
+
+		// Set required properties
+		dopts := []DomainOption{
 			// Generate a new identifier
-			WithID(NewID()),
+			WithID(ID(code)),
 			// Use parsed URL to normalize it
 			WithURL(u.String()),
-		)
+		}
+
+		// Secret required?
+		if req.Secret != nil {
+			// Derive secret hash from the secret value.
+			sh, err := secretEncoder.Hash(*req.Secret)
+			if err != nil {
+				res.Error = &errorsv1.Error{
+					ErrorMessage: "Unable to compute secret hash.",
+					ErrorCode:    http.StatusInternalServerError,
+				}
+				return &res, nil
+			}
+
+			// Add the secret hash.
+			dopts = append(dopts, WithSecretHash(sh))
+		}
+
+		// Create a new Link.
+		domainObject := New(dopts...)
 
 		// Save to persistence
 		if err := links.Save(ctx, domainObject); err != nil {
@@ -70,8 +102,9 @@ func CreateHandler(links Repository, publisher eventbus.EventPublisher) reactor.
 
 		// Prepare response
 		res.Link = &urlshortener.Link{
-			Id:  string(domainObject.GetID()),
-			Url: domainObject.GetURL(),
+			Id:             string(domainObject.GetID()),
+			Url:            types.AsRef(domainObject.GetURL()),
+			SecretRequired: domainObject.GetSecretHash() != "",
 		}
 
 		// Publish creation notification

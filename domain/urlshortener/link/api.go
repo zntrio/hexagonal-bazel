@@ -14,6 +14,8 @@ type Link interface {
 	GetID() ID
 	// GetURL returns the original shortened url.
 	GetURL() string
+	// GetSecretHash returns the secret hash value for verification.
+	GetSecretHash() string
 }
 
 var (
@@ -23,6 +25,10 @@ var (
 
 	// ErrLinkNotFound is raised when the persistence query returned no result.
 	ErrLinkNotFound = errors.New("link not found")
+
+	// ErrInvalidSecret is raised when the given secret doesn't match
+	// the stored one.
+	ErrInvalidSecret = errors.New("invalid secret")
 )
 
 // -----------------------------------------------------------------------------

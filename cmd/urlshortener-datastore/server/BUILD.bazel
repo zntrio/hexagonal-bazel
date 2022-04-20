@@ -8,6 +8,8 @@ go_library(
     deps = [
         "//api/urlshortener/v1:urlshortener",
         "//domain/urlshortener/link",
+        "//infrastructure/generator",
+        "//infrastructure/security/password",
         "//pkg/eventbus",
     ],
 )

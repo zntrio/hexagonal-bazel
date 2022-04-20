@@ -1,0 +1,20 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "password",
+    srcs = [
+        "api.go",
+        "argon2.go",
+        "identity.go",
+    ],
+    importpath = "zntr.io/hexagonal-bazel/infrastructure/security/password",
+    visibility = ["//visibility:public"],
+    deps = ["@org_golang_x_crypto//argon2"],
+)
+
+go_test(
+    name = "password_test",
+    srcs = ["argon2_test.go"],
+    embed = [":password"],
+    deps = ["@com_github_stretchr_testify//assert"],
+)

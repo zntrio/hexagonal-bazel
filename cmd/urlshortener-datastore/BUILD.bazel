@@ -10,6 +10,8 @@ go_library(
         "//cmd/urlshortener-datastore/server",
         "//infrastructure/broker",
         "//infrastructure/datastore/badger",
+        "//infrastructure/generator/shortid",
+        "//infrastructure/security/password",
         "@com_github_timshannon_badgerhold_v4//:badgerhold",
         "@org_golang_google_grpc//:go_default_library",
     ],
