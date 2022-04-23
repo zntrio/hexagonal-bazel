@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/cmd/urlshortener-api/router"
@@ -22,7 +23,7 @@ func main() {
 	r.Use(middleware.Timeout(60 * time.Second))
 
 	// Connect to datastore
-	conn, err := grpc.Dial("localhost:3001", grpc.WithInsecure())
+	conn, err := grpc.Dial("localhost:3001", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
 	}

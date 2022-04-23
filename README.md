@@ -1,5 +1,8 @@
 # Bazel / Golang / Hexagonal Architecture
 
+A little bit over-engineered urlshortener service to demonstrate Hexagonal 
+Architecture usage with Bazel.
+
 ## Build
 
 You need to install bazelisk
@@ -30,6 +33,11 @@ Start the API in a different console
 bazelisk run //cmd/urlshortener-api
 ```
 
+Start the GraphQL API in a different console
+
+```sh
+bazelisk run //cmd/urlshortener-graphql
+```
 ## Tests
 
 ### Public links

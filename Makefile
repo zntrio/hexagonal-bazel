@@ -39,6 +39,9 @@ bin/protoc-gen-go:
 bin/protoc-gen-go-grpc: bin/protoc-gen-go
 	GOBIN=$(shell pwd)/bin go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 
+bin/gqlgen: 
+	GOBIN=$(shell pwd)/bin go install github.com/99designs/gqlgen@v0.17
+
 .PHONY: regenerate-api
 regenerate-api: bin/protoc-gen-go bin/protoc-gen-go-grpc
 	rm -rf $(PROTO_API_DIR) 2>/dev/null
@@ -50,3 +53,4 @@ regenerate-api: bin/protoc-gen-go bin/protoc-gen-go-grpc
 		--go_opt=paths=source_relative --go_out=$(PROTO_API_DIR) \
 		--go-grpc_opt=paths=source_relative --go-grpc_out=$(PROTO_API_DIR) \
 		$(shell find $(PROTO_SRC_DIR) -iname "*.proto")
+

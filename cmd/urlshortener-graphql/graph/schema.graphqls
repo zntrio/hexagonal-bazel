@@ -1,0 +1,23 @@
+# The query type, represents all of the entry points into our object graph
+type Query {
+    link(id: ID!): Link
+}
+# The mutation type, represents all updates we can make to our data
+type Mutation {
+    shortenUrl(url: String!, opts: ShortenInput): Link
+    resolveSecuredUrl(id: ID!, secret: String!): Link
+}
+# Represents a shortened URL
+type Link {
+    # Link public identifier
+    id: ID!
+    # Target URL 
+    url: String
+    # Flag to indicate that the resolution requires a secret.
+    secretRequired: Boolean
+}
+# The input object sent when someone is shortening an URL
+input ShortenInput {
+    # OPTIONAL. Secret to protect the URL resolution.
+    secret: String
+}

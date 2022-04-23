@@ -1,0 +1,16 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "generated",
+    srcs = ["generated.go"],
+    importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-graphql/graph/generated",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/urlshortener/v1:urlshortener",
+        "//cmd/urlshortener-graphql/graph/model",
+        "@com_github_99designs_gqlgen//graphql",
+        "@com_github_99designs_gqlgen//graphql/introspection",
+        "@com_github_vektah_gqlparser_v2//:gqlparser",
+        "@com_github_vektah_gqlparser_v2//ast",
+    ],
+)
