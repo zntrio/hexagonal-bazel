@@ -1,0 +1,24 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "urlshortener",
+    srcs = [
+        "create_link.go",
+        "mappers.go",
+        "resolve_link.go",
+    ],
+    importpath = "zntr.io/hexagonal-bazel/application/urlshortener/v1",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/system/errors/v1:errors",
+        "//api/urlshortener/v1:urlshortener",
+        "//domain/urlshortener/link",
+        "//infrastructure/generator",
+        "//infrastructure/security/password",
+        "//pkg/eventbus",
+        "//pkg/reactor",
+        "//pkg/types",
+        "@com_github_go_ozzo_ozzo_validation_v4//:ozzo-validation",
+        "@com_github_go_ozzo_ozzo_validation_v4//is",
+    ],
+)

@@ -1,0 +1,14 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "urlshortener-syncer_lib",
+    srcs = ["main.go"],
+    importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-syncer",
+    visibility = ["//visibility:private"],
+)
+
+go_binary(
+    name = "urlshortener-syncer",
+    embed = [":urlshortener-syncer_lib"],
+    visibility = ["//visibility:public"],
+)

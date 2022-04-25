@@ -4,6 +4,7 @@ go_library(
     name = "broker",
     srcs = [
         "console.go",
+        "jetstream.go",
         "noop.go",
     ],
     importpath = "zntr.io/hexagonal-bazel/infrastructure/broker",
@@ -11,5 +12,7 @@ go_library(
     deps = [
         "//api/system/events/v1:events",
         "//pkg/eventbus",
+        "@com_github_nats_io_nats_go//:nats_go",
+        "@org_golang_google_protobuf//proto",
     ],
 )

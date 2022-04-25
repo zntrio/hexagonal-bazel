@@ -217,6 +217,13 @@ def go_repositories():
         version = "v5.0.7",
     )
     go_repository(
+        name = "com_github_go_logr_logr",
+        importpath = "github.com/go-logr/logr",
+        sum = "h1:2DntVwHkVopvECVRSlL5PSo9eG+cAkDCuckLubN+rq0=",
+        version = "v1.2.3",
+    )
+
+    go_repository(
         name = "com_github_go_ozzo_ozzo_validation_v4",
         importpath = "github.com/go-ozzo/ozzo-validation/v4",
         sum = "h1:byhDUpfEwjsVQb1vBunvIjh2BHQ9ead57VkAEY4V+Es=",
@@ -344,8 +351,8 @@ def go_repositories():
     go_repository(
         name = "com_github_klauspost_compress",
         importpath = "github.com/klauspost/compress",
-        sum = "h1:wXr2uRxZTJXHLly6qhJabee5JqIhTRoLBhDOA74hDEQ=",
-        version = "v1.13.1",
+        sum = "h1:eijASRJcobkVtSt81Olfh7JX43osYLwy5krOJo6YEu4=",
+        version = "v1.14.4",
     )
     go_repository(
         name = "com_github_kr_pretty",
@@ -396,6 +403,12 @@ def go_repositories():
         sum = "h1:wuysRhFDzyxgEmMf5xjvJ2M9dZoWAXNNr5LSBS7uHXY=",
         version = "v0.0.12",
     )
+    go_repository(
+        name = "com_github_minio_highwayhash",
+        importpath = "github.com/minio/highwayhash",
+        sum = "h1:Aak5U0nElisjDCfPSG79Tgzkn2gl66NxOMspRrKnA/g=",
+        version = "v1.0.2",
+    )
 
     go_repository(
         name = "com_github_mitchellh_go_homedir",
@@ -409,6 +422,39 @@ def go_repositories():
         sum = "h1:f/MjBEBDLttYCGfRaKBbKSRVF5aV2O6fnBpzknuE3jU=",
         version = "v1.2.3",
     )
+    go_repository(
+        name = "com_github_nats_io_jwt_v2",
+        importpath = "github.com/nats-io/jwt/v2",
+        sum = "h1:lem6QCvxR0Y28gth9P+wV2K/zYUUAkJ+55U8cpS0p5I=",
+        version = "v2.2.1-0.20220330180145-442af02fd36a",
+    )
+
+    go_repository(
+        name = "com_github_nats_io_nats_go",
+        importpath = "github.com/nats-io/nats.go",
+        sum = "h1:/QLCss4vQ6wvDpbqXucsVRDi13tFIR6kTdau+nXzKJw=",
+        version = "v1.14.0",
+    )
+    go_repository(
+        name = "com_github_nats_io_nats_server_v2",
+        importpath = "github.com/nats-io/nats-server/v2",
+        sum = "h1:WZ9m/d8rklkWo6opo3X927vXnuaE00VEEl5zXcpL6qw=",
+        version = "v2.8.1",
+    )
+
+    go_repository(
+        name = "com_github_nats_io_nkeys",
+        importpath = "github.com/nats-io/nkeys",
+        sum = "h1:cgM5tL53EvYRU+2YLXIK0G2mJtK12Ft9oeooSZMA2G8=",
+        version = "v0.3.0",
+    )
+    go_repository(
+        name = "com_github_nats_io_nuid",
+        importpath = "github.com/nats-io/nuid",
+        sum = "h1:5iA8DT8V7q8WK2EScv2padNa/rTESc1KdnPw4TC2paw=",
+        version = "v1.0.1",
+    )
+
     go_repository(
         name = "com_github_oneofone_xxhash",
         importpath = "github.com/OneOfOne/xxhash",
@@ -693,8 +739,8 @@ def go_repositories():
     go_repository(
         name = "org_golang_x_sys",
         importpath = "golang.org/x/sys",
-        sum = "h1:id054HUawV2/6IGm2IV8KZQjqtwAOo2CYlOToYqa0d0=",
-        version = "v0.0.0-20211019181941-9d821ace8654",
+        sum = "h1:0jf+tOCoZ3LyutmCOWpVni1chK4VfFLhRsDK7MhqGRY=",
+        version = "v0.0.0-20220111092808-5a964db01320",
     )
     go_repository(
         name = "org_golang_x_term",
@@ -708,6 +754,13 @@ def go_repositories():
         sum = "h1:olpwvP2KacW1ZWvsR7uQhoyTYvKAupfQrRGBFM352Gk=",
         version = "v0.3.7",
     )
+    go_repository(
+        name = "org_golang_x_time",
+        importpath = "golang.org/x/time",
+        sum = "h1:GZokNIeuVkl3aZHJchRrr13WCsols02MLUcz1U9is6M=",
+        version = "v0.0.0-20211116232009-f0f3c7e86c11",
+    )
+
     go_repository(
         name = "org_golang_x_tools",
         importpath = "golang.org/x/tools",

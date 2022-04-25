@@ -8,5 +8,5 @@ import (
 
 type EventPublisher interface {
 	// Publish the event throught the eventbus implementation.
-	Publish(ctx context.Context, event *eventsv1.Event)
+	Publish(ctx context.Context, event *eventsv1.Event) error
 }

@@ -7,6 +7,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//domain/urlshortener/link",
+        "//pkg/types",
         "@com_github_timshannon_badgerhold_v4//:badgerhold",
     ],
 )

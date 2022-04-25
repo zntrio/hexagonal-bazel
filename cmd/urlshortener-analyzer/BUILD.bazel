@@ -1,0 +1,20 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "urlshortener-analyzer_lib",
+    srcs = ["main.go"],
+    importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-analyzer",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//api/system/events/v1:events",
+        "//api/urlshortener/v1:urlshortener",
+        "@com_github_nats_io_nats_go//:nats_go",
+        "@org_golang_google_protobuf//proto",
+    ],
+)
+
+go_binary(
+    name = "urlshortener-analyzer",
+    embed = [":urlshortener-analyzer_lib"],
+    visibility = ["//visibility:public"],
+)

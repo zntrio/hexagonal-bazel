@@ -14,6 +14,7 @@ func NoOP() eventbus.EventPublisher {
 type noopPublisher struct {
 }
 
-func (p *noopPublisher) Publish(ctx context.Context, e *eventsv1.Event) {
+func (p *noopPublisher) Publish(ctx context.Context, e *eventsv1.Event) error {
 	// Do nothing
+	return nil
 }

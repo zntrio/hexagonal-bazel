@@ -1,4 +1,4 @@
-package link
+package v1
 
 import (
 	"context"
@@ -11,18 +11,28 @@ import (
 
 	errorsv1 "zntr.io/hexagonal-bazel/api/system/errors/v1"
 	urlshortener "zntr.io/hexagonal-bazel/api/urlshortener/v1"
+	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
 	"zntr.io/hexagonal-bazel/infrastructure/security/password"
 	"zntr.io/hexagonal-bazel/pkg/reactor"
-	"zntr.io/hexagonal-bazel/pkg/types"
+)
+
+// Type aliases
+type (
+	ResolveRequest  = urlshortener.ResolveRequest
+	ResolveResponse = urlshortener.ResolveResponse
 )
 
 // ResolveHandler handles the urlshortener.Resolve request.
-func ResolveHandler(links Resolver, secretVerifier password.Verifier) reactor.Handler[urlshortener.ResolveRequest, urlshortener.ResolveResponse] {
-	return func(ctx context.Context, req *urlshortener.ResolveRequest) (*urlshortener.ResolveResponse, error) {
-		var res urlshortener.ResolveResponse
+func ResolveHandler(links link.Resolver, secretVerifier password.Verifier) reactor.Handler[ResolveRequest, ResolveResponse] {
+	return func(ctx context.Context, req *ResolveRequest) (*ResolveResponse, error) {
+		var res ResolveResponse
 
 		// Check arguments
 		if req == nil {
+			res.Error = &errorsv1.Error{
+				ErrorMessage: "Unable to process nil request.",
+				ErrorCode:    http.StatusBadRequest,
+			}
 			return &res, nil
 		}
 
@@ -39,11 +49,11 @@ func ResolveHandler(links Resolver, secretVerifier password.Verifier) reactor.Ha
 		}
 
 		// Save to persistence
-		m, err := links.GetByID(ctx, ID(req.Id))
+		m, err := links.GetByID(ctx, link.ID(req.Id))
 		switch {
 		case err == nil:
 			// Skip processing
-		case errors.Is(err, ErrLinkNotFound):
+		case errors.Is(err, link.ErrLinkNotFound):
 			res.Error = &errorsv1.Error{
 				ErrorMessage: "Link not found.",
 				ErrorCode:    http.StatusNotFound,
@@ -78,10 +88,7 @@ func ResolveHandler(links Resolver, secretVerifier password.Verifier) reactor.Ha
 		}
 
 		// Prepare response
-		res.Link = &urlshortener.Link{
-			Id:  string(m.GetID()),
-			Url: types.AsRef(m.GetURL()),
-		}
+		res.Link = fromLink(m)
 
 		// No error
 		return &res, nil

@@ -1,15 +1,15 @@
 package link
 
 import (
+	"google.golang.org/protobuf/types/known/anypb"
 	eventsv1 "zntr.io/hexagonal-bazel/api/system/events/v1"
 	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
-	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/GoWebProd/uuid7"
 )
 
-// LinkCreated generates an event to notify shortened link creation.
-func LinkCreated(obj *urlshortenerv1.Link) *eventsv1.Event {
+// Created generates an event to notify shortened link creation.
+func Created(obj *urlshortenerv1.Link) *eventsv1.Event {
 	payload, err := anypb.New(obj)
 	if err != nil {
 		panic(err)
