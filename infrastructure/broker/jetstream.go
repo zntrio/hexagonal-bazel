@@ -9,10 +9,9 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	eventsv1 "zntr.io/hexagonal-bazel/api/system/events/v1"
-	"zntr.io/hexagonal-bazel/pkg/eventbus"
 )
 
-func Jetstream(js nats.JetStreamContext) eventbus.EventPublisher {
+func Jetstream(js nats.JetStreamContext) EventPublisher {
 	return &jetstreamPublisher{
 		js: js,
 	}

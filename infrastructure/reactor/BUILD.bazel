@@ -3,6 +3,6 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "reactor",
     srcs = ["api.go"],
-    importpath = "zntr.io/hexagonal-bazel/pkg/reactor",
+    importpath = "zntr.io/hexagonal-bazel/infrastructure/reactor",
     visibility = ["//visibility:public"],
 )

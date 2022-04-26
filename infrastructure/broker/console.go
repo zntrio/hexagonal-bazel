@@ -5,10 +5,9 @@ import (
 	"fmt"
 
 	eventsv1 "zntr.io/hexagonal-bazel/api/system/events/v1"
-	"zntr.io/hexagonal-bazel/pkg/eventbus"
 )
 
-func Console() eventbus.EventPublisher {
+func Console() EventPublisher {
 	return &consolePublisher{}
 }
 

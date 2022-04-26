@@ -8,13 +8,12 @@ import (
 	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
 	"zntr.io/hexagonal-bazel/infrastructure/generator"
 	"zntr.io/hexagonal-bazel/infrastructure/security/password"
-	"zntr.io/hexagonal-bazel/pkg/eventbus"
 )
 
-func New(store link.Repository, publisher eventbus.EventPublisher, codeGenerator generator.Generator[string], secretStrategy password.Strategy) apiurlshortenerv1.ShortenerAPIServer {
+func New(store link.Repository, codeGenerator generator.Generator[string], secretStrategy password.Strategy) apiurlshortenerv1.ShortenerAPIServer {
 	// No error
 	return &urlShortenerServer{
-		createHandler:  urlshortenerv1.CreateHandler(store, publisher, codeGenerator, secretStrategy),
+		createHandler:  urlshortenerv1.CreateHandler(store, codeGenerator, secretStrategy),
 		resolveHandler: urlshortenerv1.ResolveHandler(store, secretStrategy),
 	}
 }
@@ -22,8 +21,8 @@ func New(store link.Repository, publisher eventbus.EventPublisher, codeGenerator
 type urlShortenerServer struct {
 	apiurlshortenerv1.UnimplementedShortenerAPIServer
 
-	createHandler  func(context.Context, *urlshortenerv1.CreateRequest) (*urlshortenerv1.CreateResponse, error)
-	resolveHandler func(context.Context, *urlshortenerv1.ResolveRequest) (*urlshortenerv1.ResolveResponse, error)
+	createHandler  urlshortenerv1.CreateHandlerFunc
+	resolveHandler urlshortenerv1.ResolveHandlerFunc
 }
 
 // Create a shortened link from the given URL.

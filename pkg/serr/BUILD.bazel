@@ -1,9 +1,0 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
-
-go_library(
-    name = "serr",
-    srcs = ["api.go"],
-    importpath = "zntr.io/hexagonal-bazel/pkg/serr",
-    visibility = ["//visibility:public"],
-    deps = ["//api/system/errors/v1:errors"],
-)

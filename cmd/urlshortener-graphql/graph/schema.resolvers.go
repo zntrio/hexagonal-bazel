@@ -29,7 +29,7 @@ func (r *mutationResolver) ShortenURL(ctx context.Context, url string, opts *mod
 	case res == nil:
 		return nil, errors.New("unexpected nil response")
 	case res.Error != nil:
-		return nil, fmt.Errorf("%d - %s", res.Error.ErrorCode, res.Error.ErrorMessage)
+		return nil, fmt.Errorf("%d - %s", res.Error.StatusCode, res.Error.ErrorDescription)
 	default:
 	}
 
@@ -51,7 +51,7 @@ func (r *mutationResolver) ResolveSecuredURL(ctx context.Context, id string, sec
 	case res == nil:
 		return nil, errors.New("unexpected nil response")
 	case res.Error != nil:
-		return nil, fmt.Errorf("%d - %s", res.Error.ErrorCode, res.Error.ErrorMessage)
+		return nil, fmt.Errorf("%d - %s", res.Error.StatusCode, res.Error.ErrorDescription)
 	default:
 	}
 
@@ -72,7 +72,7 @@ func (r *queryResolver) Link(ctx context.Context, id string) (*urlshortenerv1.Li
 	case res == nil:
 		return nil, errors.New("unexpected nil response")
 	case res.Error != nil:
-		return nil, fmt.Errorf("%d - %s", res.Error.ErrorCode, res.Error.ErrorMessage)
+		return nil, fmt.Errorf("%d - %s", res.Error.StatusCode, res.Error.ErrorDescription)
 	default:
 	}
 

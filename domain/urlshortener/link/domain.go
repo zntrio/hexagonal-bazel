@@ -13,6 +13,7 @@ var _ Link = (*defaultLink)(nil)
 func (d *defaultLink) GetID() ID             { return d.id }
 func (d *defaultLink) GetURL() string        { return d.url }
 func (d *defaultLink) GetSecretHash() string { return d.secretHash }
+func (d *defaultLink) IsProtected() bool     { return d.secretHash != "" }
 
 // -----------------------------------------------------------------------------
 

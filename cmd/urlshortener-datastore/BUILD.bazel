@@ -8,7 +8,6 @@ go_library(
     deps = [
         "//api/urlshortener/v1:urlshortener",
         "//cmd/urlshortener-datastore/server",
-        "//infrastructure/broker",
         "//infrastructure/datastore/badger",
         "//infrastructure/generator/shortid",
         "//infrastructure/security/password",

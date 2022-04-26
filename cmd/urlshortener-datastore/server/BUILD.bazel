@@ -11,6 +11,5 @@ go_library(
         "//domain/urlshortener/link",
         "//infrastructure/generator",
         "//infrastructure/security/password",
-        "//pkg/eventbus",
     ],
 )

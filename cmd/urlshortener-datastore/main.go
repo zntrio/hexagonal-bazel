@@ -10,7 +10,6 @@ import (
 
 	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/cmd/urlshortener-datastore/server"
-	"zntr.io/hexagonal-bazel/infrastructure/broker"
 	"zntr.io/hexagonal-bazel/infrastructure/datastore/badger"
 	"zntr.io/hexagonal-bazel/infrastructure/generator/shortid"
 	"zntr.io/hexagonal-bazel/infrastructure/security/password"
@@ -40,7 +39,6 @@ func main() {
 	urlshortenerv1.RegisterShortenerAPIServer(grpcServer,
 		server.New(
 			badger.Links(store),
-			broker.Console(),
 			shortid.New(1),
 			password.Argon2(),
 		),

@@ -11,7 +11,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//api/urlshortener/v1:urlshortener",
-        "//pkg/serr",
+        "//infrastructure/serr",
         "//pkg/types",
         "@com_github_go_chi_chi_v5//:chi",
         "@org_golang_google_grpc//:go_default_library",

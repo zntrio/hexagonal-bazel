@@ -10,6 +10,6 @@ func fromLink(d link.Link) *urlshortener.Link {
 	return &urlshortener.Link{
 		Id:             string(d.GetID()),
 		Url:            types.AsRef(d.GetURL()),
-		SecretRequired: d.GetSecretHash() != "",
+		SecretRequired: d.IsProtected(),
 	}
 }

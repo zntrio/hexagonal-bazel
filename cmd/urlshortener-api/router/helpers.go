@@ -6,23 +6,21 @@ import (
 	"net/http"
 
 	"google.golang.org/grpc"
-	"zntr.io/hexagonal-bazel/pkg/serr"
+	"zntr.io/hexagonal-bazel/infrastructure/serr"
 	"zntr.io/hexagonal-bazel/pkg/types"
 )
 
 func delegateTo[REQ any, RES serr.ServiceError](ctx context.Context, w http.ResponseWriter, req REQ, callFunc func(context.Context, REQ, ...grpc.CallOption) (RES, error)) {
 	// Call the handler
-	res, err := callFunc(ctx, req)
+	res, _ := callFunc(ctx, req)
+	// Public error
 	switch {
-	case err != nil:
-		http.Error(w, "Unexpected error occured", http.StatusInternalServerError)
-		return
 	case types.IsNil(res):
 		http.Error(w, "Unexpected nil response", http.StatusInternalServerError)
 		return
 	case res.GetError() != nil:
 		// Set the HTTP code
-		w.WriteHeader(int(res.GetError().ErrorCode))
+		w.WriteHeader(int(res.GetError().StatusCode))
 
 		// Send error as json
 		if err := json.NewEncoder(w).Encode(res.GetError()); err != nil {

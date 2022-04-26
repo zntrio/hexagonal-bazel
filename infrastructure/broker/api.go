@@ -1,4 +1,4 @@
-package eventbus
+package broker
 
 import (
 	"context"

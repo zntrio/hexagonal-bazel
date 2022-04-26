@@ -1,0 +1,17 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "serr",
+    srcs = [
+        "api.go",
+        "default_builder.go",
+        "predefined.go",
+    ],
+    importpath = "zntr.io/hexagonal-bazel/infrastructure/serr",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/system/errors/v1:errors",
+        "//pkg/types",
+        "@com_github_go_ozzo_ozzo_validation_v4//:ozzo-validation",
+    ],
+)

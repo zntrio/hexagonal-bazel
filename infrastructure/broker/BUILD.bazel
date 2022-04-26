@@ -3,6 +3,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "broker",
     srcs = [
+        "api.go",
         "console.go",
         "jetstream.go",
         "noop.go",
@@ -11,7 +12,6 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//api/system/events/v1:events",
-        "//pkg/eventbus",
         "@com_github_nats_io_nats_go//:nats_go",
         "@org_golang_google_protobuf//proto",
     ],

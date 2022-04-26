@@ -16,6 +16,8 @@ type Link interface {
 	GetURL() string
 	// GetSecretHash returns the secret hash value for verification.
 	GetSecretHash() string
+	// IsProtected returns true if the link is secret protected.
+	IsProtected() bool
 }
 
 var (

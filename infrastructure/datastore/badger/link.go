@@ -36,6 +36,7 @@ var _ link.Link = (*linkEntity)(nil)
 func (e *linkEntity) GetID() link.ID        { return link.ID(e.ID) }
 func (e *linkEntity) GetURL() string        { return e.URL }
 func (e *linkEntity) GetSecretHash() string { return e.SecretHash }
+func (d *linkEntity) IsProtected() bool     { return d.SecretHash != "" }
 
 // -----------------------------------------------------------------------------
 
@@ -53,7 +54,7 @@ func (r *linkRepository) GetByID(ctx context.Context, id link.ID) (link.Link, er
 
 	// Commit transaction
 	if err := tx.Commit(); err != nil {
-		return nil, fmt.Errorf("badger: %v: %w", err, link.ErrUnableToSaveLink)
+		return nil, fmt.Errorf("badger: transaction error - %v: %w", err, link.ErrUnableToSaveLink)
 	}
 
 	// No error
@@ -83,7 +84,7 @@ func (r *linkRepository) Save(ctx context.Context, domain link.Link) error {
 
 	// Commit transaction
 	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("badger: %v: %w", err, link.ErrUnableToSaveLink)
+		return fmt.Errorf("badger: transaction error - %v: %w", err, link.ErrUnableToSaveLink)
 	}
 
 	// No error
