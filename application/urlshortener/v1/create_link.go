@@ -12,6 +12,7 @@ import (
 
 	urlshortener "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
+	"zntr.io/hexagonal-bazel/infrastructure/clock"
 	"zntr.io/hexagonal-bazel/infrastructure/generator"
 	"zntr.io/hexagonal-bazel/infrastructure/reactor"
 	"zntr.io/hexagonal-bazel/infrastructure/security/password"
@@ -23,7 +24,7 @@ import (
 type (
 	CreateRequest     = urlshortener.CreateRequest
 	CreateResponse    = urlshortener.CreateResponse
-	CreateHandlerFunc reactor.Handler[CreateRequest, CreateResponse]
+	CreateHandlerFunc = reactor.Handler[CreateRequest, CreateResponse]
 )
 
 const (
@@ -32,7 +33,7 @@ const (
 )
 
 // CreateHandler handles the urlshortener.Create request.
-func CreateHandler(links link.Repository, codeGenerator generator.Generator[string], secretEncoder password.Hasher) CreateHandlerFunc {
+func CreateHandler(links link.Repository, codeGenerator generator.Generator[string], secretEncoder password.Hasher, clockProvider clock.Clock) CreateHandlerFunc {
 	return func(ctx context.Context, req *CreateRequest) (*CreateResponse, error) {
 		var res CreateResponse
 
@@ -97,6 +98,8 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 			link.WithID(link.ID(code)),
 			// Use parsed URL to normalize it
 			link.WithURL(u.String()),
+			// Set creation date
+			link.WithCreatedAt(clockProvider.Now()),
 		}
 
 		// Secret required?

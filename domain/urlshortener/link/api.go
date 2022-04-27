@@ -3,6 +3,7 @@ package link
 import (
 	"context"
 	"errors"
+	"time"
 )
 
 // ID defines the link domain identity type.
@@ -16,6 +17,8 @@ type Link interface {
 	GetURL() string
 	// GetSecretHash returns the secret hash value for verification.
 	GetSecretHash() string
+	// GetCreatedAt returns the time when the link as been created.
+	GetCreatedAt() time.Time
 	// IsProtected returns true if the link is secret protected.
 	IsProtected() bool
 }

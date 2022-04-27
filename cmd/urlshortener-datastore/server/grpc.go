@@ -6,6 +6,7 @@ import (
 	apiurlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	urlshortenerv1 "zntr.io/hexagonal-bazel/application/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
+	"zntr.io/hexagonal-bazel/infrastructure/clock"
 	"zntr.io/hexagonal-bazel/infrastructure/generator"
 	"zntr.io/hexagonal-bazel/infrastructure/security/password"
 )
@@ -13,7 +14,7 @@ import (
 func New(store link.Repository, codeGenerator generator.Generator[string], secretStrategy password.Strategy) apiurlshortenerv1.ShortenerAPIServer {
 	// No error
 	return &urlShortenerServer{
-		createHandler:  urlshortenerv1.CreateHandler(store, codeGenerator, secretStrategy),
+		createHandler:  urlshortenerv1.CreateHandler(store, codeGenerator, secretStrategy, clock.Real()),
 		resolveHandler: urlshortenerv1.ResolveHandler(store, secretStrategy),
 	}
 }

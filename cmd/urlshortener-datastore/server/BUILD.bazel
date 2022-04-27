@@ -9,6 +9,7 @@ go_library(
         "//api/urlshortener/v1:urlshortener",
         "//application/urlshortener/v1:urlshortener",
         "//domain/urlshortener/link",
+        "//infrastructure/clock",
         "//infrastructure/generator",
         "//infrastructure/security/password",
     ],

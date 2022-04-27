@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
 	"zntr.io/hexagonal-bazel/pkg/types"
@@ -26,17 +27,19 @@ type linkRepository struct {
 // -----------------------------------------------------------------------------
 
 type linkEntity struct {
-	ID         string `json:"id"`
-	URL        string `json:"url"`
-	SecretHash string `json:"secret_hash"`
+	ID         string    `json:"id"`
+	URL        string    `json:"url"`
+	SecretHash string    `json:"secret_hash"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 var _ link.Link = (*linkEntity)(nil)
 
-func (e *linkEntity) GetID() link.ID        { return link.ID(e.ID) }
-func (e *linkEntity) GetURL() string        { return e.URL }
-func (e *linkEntity) GetSecretHash() string { return e.SecretHash }
-func (d *linkEntity) IsProtected() bool     { return d.SecretHash != "" }
+func (e *linkEntity) GetID() link.ID          { return link.ID(e.ID) }
+func (e *linkEntity) GetURL() string          { return e.URL }
+func (e *linkEntity) GetSecretHash() string   { return e.SecretHash }
+func (e *linkEntity) GetCreatedAt() time.Time { return e.CreatedAt }
+func (d *linkEntity) IsProtected() bool       { return d.SecretHash != "" }
 
 // -----------------------------------------------------------------------------
 
@@ -72,6 +75,7 @@ func (r *linkRepository) Save(ctx context.Context, domain link.Link) error {
 		ID:         string(domain.GetID()),
 		URL:        domain.GetURL(),
 		SecretHash: domain.GetSecretHash(),
+		CreatedAt:  domain.GetCreatedAt(),
 	}
 
 	// Create a transaction

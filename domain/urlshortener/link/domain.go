@@ -1,19 +1,23 @@
 package link
 
+import "time"
+
 // defaultLink implements the Link domain object interface.
 type defaultLink struct {
 	id         ID
 	url        string
 	secretHash string
+	createdAt  time.Time
 }
 
 // Compile-time assertion to enforce type implementation.
 var _ Link = (*defaultLink)(nil)
 
-func (d *defaultLink) GetID() ID             { return d.id }
-func (d *defaultLink) GetURL() string        { return d.url }
-func (d *defaultLink) GetSecretHash() string { return d.secretHash }
-func (d *defaultLink) IsProtected() bool     { return d.secretHash != "" }
+func (d *defaultLink) GetID() ID               { return d.id }
+func (d *defaultLink) GetURL() string          { return d.url }
+func (d *defaultLink) GetSecretHash() string   { return d.secretHash }
+func (d *defaultLink) GetCreatedAt() time.Time { return d.createdAt }
+func (d *defaultLink) IsProtected() bool       { return d.secretHash != "" }
 
 // -----------------------------------------------------------------------------
 
@@ -38,6 +42,13 @@ func WithURL(url string) DomainOption {
 func WithSecretHash(value string) DomainOption {
 	return func(dopts *defaultLink) {
 		dopts.secretHash = value
+	}
+}
+
+// WithCreatedAt sets the domain object creation date property.
+func WithCreatedAt(value time.Time) DomainOption {
+	return func(dopts *defaultLink) {
+		dopts.createdAt = value
 	}
 }
 

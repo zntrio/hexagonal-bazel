@@ -1,12 +1,12 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
-    name = "reactor",
+    name = "clock",
     srcs = [
-        "after.go",
         "api.go",
-        "before.go",
+        "frozen.go",
+        "real.go",
     ],
-    importpath = "zntr.io/hexagonal-bazel/infrastructure/reactor",
+    importpath = "zntr.io/hexagonal-bazel/infrastructure/clock",
     visibility = ["//visibility:public"],
 )
