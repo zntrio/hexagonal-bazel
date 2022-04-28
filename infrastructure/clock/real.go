@@ -10,5 +10,5 @@ type realClock struct {
 }
 
 func (rt *realClock) Now() time.Time {
-	return time.Now()
+	return time.Now().UTC()
 }

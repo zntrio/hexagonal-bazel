@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"time"
 	"unicode/utf8"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -39,7 +40,7 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 
 		// Check arguments
 		if req == nil {
-			err := errors.New("unable to process nil request")
+			err := errors.New("link: unable to process nil request")
 			res.Error = serr.ServerError(err).Build()
 			return &res, err
 		}
@@ -52,7 +53,7 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 			res.Error = serr.InvalidRequest().Build(
 				serr.InternalErr(err),
 			)
-			return &res, fmt.Errorf("unable to validate the request: %w", err)
+			return &res, fmt.Errorf("link: unable to validate the request: %w", err)
 		}
 
 		// Check URL length
@@ -61,7 +62,7 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 				serr.Description("The given URL is too long (> 2000 characters)."),
 				serr.Fields("url"),
 			)
-			return &res, errors.New("url is too long")
+			return &res, errors.New("link: url is too long")
 		}
 
 		// Parse URL to normalize it
@@ -70,7 +71,7 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 			res.Error = serr.InvalidRequest().Build(
 				serr.Fields("url"),
 			)
-			return &res, fmt.Errorf("unable to validate input url %q: %w", req.Url, err)
+			return &res, fmt.Errorf("link: unable to validate input url %q: %w", req.Url, err)
 		}
 		if u.Scheme == "" {
 			// Default to https for empty scheme
@@ -89,7 +90,7 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 		code, err := codeGenerator.Generate()
 		if err != nil {
 			res.Error = serr.ServerError(err).Build()
-			return &res, fmt.Errorf("unable to generate public identifier: %w", err)
+			return &res, fmt.Errorf("link: unable to generate public identifier: %w", err)
 		}
 
 		// Set required properties
@@ -108,11 +109,29 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 			sh, err := secretEncoder.Hash(*req.Secret)
 			if err != nil {
 				res.Error = serr.ServerError(err).Build()
-				return &res, fmt.Errorf("unable to compute secret hash: %w", err)
+				return &res, fmt.Errorf("link: unable to compute secret hash: %w", err)
 			}
 
 			// Add the secret hash.
 			dopts = append(dopts, link.WithSecretHash(sh))
+		}
+
+		// Expirable link
+		if req.ExpiresIn != nil {
+			// Validate expiration
+			if *req.ExpiresIn < 30 {
+				res.Error = serr.InvalidRequest().Build(
+					serr.Description("The given expiration period is too short. It should be 30s at least."),
+					serr.Fields("expires_in"),
+				)
+				return &res, fmt.Errorf("link: expiration too short for %q: %w", req.Url, err)
+			}
+
+			// Compute expiration date
+			expiresAt := clockProvider.Now().Add(time.Duration(*req.ExpiresIn) * time.Second)
+
+			// Add the expiration date.
+			dopts = append(dopts, link.WithExpiresAt(expiresAt))
 		}
 
 		// Create a new Link.
@@ -121,7 +140,7 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 		// Save to persistence
 		if err := links.Save(ctx, domainObject); err != nil {
 			res.Error = serr.ServerError(err).Build()
-			return &res, fmt.Errorf("unable to create the shortened URL: %w", err)
+			return &res, fmt.Errorf("link: unable to create the shortened URL: %w", err)
 		}
 
 		// Prepare response

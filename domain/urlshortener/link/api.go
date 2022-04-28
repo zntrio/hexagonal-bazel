@@ -21,6 +21,10 @@ type Link interface {
 	GetCreatedAt() time.Time
 	// IsProtected returns true if the link is secret protected.
 	IsProtected() bool
+	// GetExpiresAt returns the time when the link expires.
+	GetExpiresAt() *time.Time
+	// IsExpired returns true if the link is expired at the given time.
+	IsExpired(time.Time) bool
 }
 
 var (
@@ -48,6 +52,14 @@ type Resolver interface {
 type Writer interface {
 	// Save a shortened url domain object in the repository.
 	Save(ctx context.Context, m Link) error
+}
+
+// Analytic represents Link domain analytic operations.
+type Analytic interface {
+	// Resolved create a link resolution point in the analytic database.
+	Resolved(ctx context.Context, id ID) error
+	// GetResolutionCountPerID returns resolution hits for a given period in days.
+	GetResolutionCountPerID(ctx context.Context, id ID, dayPeriod int) (int64, error)
 }
 
 type Repository interface {

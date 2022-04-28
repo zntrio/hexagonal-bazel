@@ -31,7 +31,7 @@ func ResourceNotFound() Builder {
 		opts: &Options{
 			statusCode:       http.StatusNotFound,
 			errorCode:        "resource_not_found",
-			errorDescription: "The requested resource could not be resolved, or not found.",
+			errorDescription: "The requested resource could not be resolved, is expired or not found.",
 		},
 	}
 }

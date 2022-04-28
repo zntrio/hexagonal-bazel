@@ -11,6 +11,7 @@ import (
 
 	urlshortener "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
+	"zntr.io/hexagonal-bazel/infrastructure/clock"
 	"zntr.io/hexagonal-bazel/infrastructure/reactor"
 	"zntr.io/hexagonal-bazel/infrastructure/security/password"
 	"zntr.io/hexagonal-bazel/infrastructure/serr"
@@ -24,13 +25,13 @@ type (
 )
 
 // ResolveHandler handles the urlshortener.Resolve request.
-func ResolveHandler(links link.Resolver, secretVerifier password.Verifier) ResolveHandlerFunc {
+func ResolveHandler(links link.Resolver, secretVerifier password.Verifier, clockProvider clock.Clock) ResolveHandlerFunc {
 	return func(ctx context.Context, req *ResolveRequest) (*ResolveResponse, error) {
 		var res ResolveResponse
 
 		// Check arguments
 		if req == nil {
-			err := errors.New("unable to process nil request")
+			err := errors.New("link: unable to process nil request")
 			res.Error = serr.ServerError(err).Build()
 			return &res, err
 		}
@@ -43,7 +44,7 @@ func ResolveHandler(links link.Resolver, secretVerifier password.Verifier) Resol
 			res.Error = serr.InvalidRequest().Build(
 				serr.InternalErr(err),
 			)
-			return &res, fmt.Errorf("unable to validate the request: %w", err)
+			return &res, fmt.Errorf("link: unable to validate the request: %w", err)
 		}
 
 		// Save to persistence
@@ -56,7 +57,13 @@ func ResolveHandler(links link.Resolver, secretVerifier password.Verifier) Resol
 			return &res, nil
 		case err != nil:
 			res.Error = serr.ServerError(err).Build()
-			return &res, fmt.Errorf("unable to resolve %q: %w", req.Id, err)
+			return &res, fmt.Errorf("link: unable to resolve %q: %w", req.Id, err)
+		}
+
+		// Check if secret is expired.
+		if m.IsExpired(clockProvider.Now()) {
+			res.Error = serr.ResourceNotFound().Build()
+			return &res, fmt.Errorf("link: expiration reached for %q", m.GetID())
 		}
 
 		// Check if secret is required to reveal the url
@@ -66,7 +73,7 @@ func ResolveHandler(links link.Resolver, secretVerifier password.Verifier) Resol
 					serr.Description("This shortened url requires a secret to be revealed."),
 					serr.StatusCode(http.StatusNotAcceptable),
 				)
-				return &res, fmt.Errorf("secret required for %q", m.GetID())
+				return &res, fmt.Errorf("link: secret required for %q", m.GetID())
 			}
 
 			// Verify the secret match
@@ -74,7 +81,7 @@ func ResolveHandler(links link.Resolver, secretVerifier password.Verifier) Resol
 				res.Error = serr.AccessDenied().Build(
 					serr.Description("This shortened url requires a valid secret to be revealed."),
 				)
-				return &res, fmt.Errorf("invalid secret for %q", m.GetID())
+				return &res, fmt.Errorf("link: invalid secret for %q", m.GetID())
 			}
 		}
 

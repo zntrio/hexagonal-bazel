@@ -8,16 +8,21 @@ type defaultLink struct {
 	url        string
 	secretHash string
 	createdAt  time.Time
+	expiresAt  *time.Time
 }
 
 // Compile-time assertion to enforce type implementation.
 var _ Link = (*defaultLink)(nil)
 
-func (d *defaultLink) GetID() ID               { return d.id }
-func (d *defaultLink) GetURL() string          { return d.url }
-func (d *defaultLink) GetSecretHash() string   { return d.secretHash }
-func (d *defaultLink) GetCreatedAt() time.Time { return d.createdAt }
-func (d *defaultLink) IsProtected() bool       { return d.secretHash != "" }
+func (d *defaultLink) GetID() ID                { return d.id }
+func (d *defaultLink) GetURL() string           { return d.url }
+func (d *defaultLink) GetSecretHash() string    { return d.secretHash }
+func (d *defaultLink) GetCreatedAt() time.Time  { return d.createdAt }
+func (d *defaultLink) IsProtected() bool        { return d.secretHash != "" }
+func (d *defaultLink) GetExpiresAt() *time.Time { return d.expiresAt }
+func (d *defaultLink) IsExpired(ref time.Time) bool {
+	return d.expiresAt != nil && ref.After(*d.expiresAt)
+}
 
 // -----------------------------------------------------------------------------
 
@@ -49,6 +54,13 @@ func WithSecretHash(value string) DomainOption {
 func WithCreatedAt(value time.Time) DomainOption {
 	return func(dopts *defaultLink) {
 		dopts.createdAt = value
+	}
+}
+
+// WithExpiresAt sets the domain object expiration date property.
+func WithExpiresAt(value time.Time) DomainOption {
+	return func(dopts *defaultLink) {
+		dopts.expiresAt = &value
 	}
 }
 

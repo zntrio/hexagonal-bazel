@@ -17,7 +17,7 @@ service ShortenerAPI {
 message CreateRequest {
     string url = 1;
     optional string secret = 2;
-    optional uint64 expiration = 3;
+    optional uint64 expires_in = 3;
     bool validate_only = 99;
 }
 

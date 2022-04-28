@@ -20,5 +20,6 @@ go_library(
         "//pkg/types",
         "@com_github_go_ozzo_ozzo_validation_v4//:ozzo-validation",
         "@com_github_go_ozzo_ozzo_validation_v4//is",
+        "@org_golang_google_protobuf//types/known/timestamppb",
     ],
 )

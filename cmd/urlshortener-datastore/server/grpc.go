@@ -15,7 +15,7 @@ func New(store link.Repository, codeGenerator generator.Generator[string], secre
 	// No error
 	return &urlShortenerServer{
 		createHandler:  urlshortenerv1.CreateHandler(store, codeGenerator, secretStrategy, clock.Real()),
-		resolveHandler: urlshortenerv1.ResolveHandler(store, secretStrategy),
+		resolveHandler: urlshortenerv1.ResolveHandler(store, secretStrategy, clock.Real()),
 	}
 }
 

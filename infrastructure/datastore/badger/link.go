@@ -12,6 +12,7 @@ import (
 	"github.com/timshannon/badgerhold/v4"
 )
 
+// Links returns a badger implementation of the repository.
 func Links(db *badgerhold.Store) link.Repository {
 	return &linkRepository{
 		db: db,
@@ -27,19 +28,24 @@ type linkRepository struct {
 // -----------------------------------------------------------------------------
 
 type linkEntity struct {
-	ID         string    `json:"id"`
-	URL        string    `json:"url"`
-	SecretHash string    `json:"secret_hash"`
-	CreatedAt  time.Time `json:"created_at"`
+	ID         string     `json:"id"`
+	URL        string     `json:"url"`
+	SecretHash string     `json:"secret_hash"`
+	CreatedAt  time.Time  `json:"created_at"`
+	ExpiresAt  *time.Time `json:"expires_at"`
 }
 
 var _ link.Link = (*linkEntity)(nil)
 
-func (e *linkEntity) GetID() link.ID          { return link.ID(e.ID) }
-func (e *linkEntity) GetURL() string          { return e.URL }
-func (e *linkEntity) GetSecretHash() string   { return e.SecretHash }
-func (e *linkEntity) GetCreatedAt() time.Time { return e.CreatedAt }
-func (d *linkEntity) IsProtected() bool       { return d.SecretHash != "" }
+func (e *linkEntity) GetID() link.ID           { return link.ID(e.ID) }
+func (e *linkEntity) GetURL() string           { return e.URL }
+func (e *linkEntity) GetSecretHash() string    { return e.SecretHash }
+func (e *linkEntity) GetCreatedAt() time.Time  { return e.CreatedAt }
+func (d *linkEntity) GetExpiresAt() *time.Time { return d.ExpiresAt }
+func (d *linkEntity) IsProtected() bool        { return d.SecretHash != "" }
+func (d *linkEntity) IsExpired(ref time.Time) bool {
+	return d.ExpiresAt != nil && ref.After(*d.ExpiresAt)
+}
 
 // -----------------------------------------------------------------------------
 
@@ -76,6 +82,7 @@ func (r *linkRepository) Save(ctx context.Context, domain link.Link) error {
 		URL:        domain.GetURL(),
 		SecretHash: domain.GetSecretHash(),
 		CreatedAt:  domain.GetCreatedAt(),
+		ExpiresAt:  domain.GetExpiresAt(),
 	}
 
 	// Create a transaction
