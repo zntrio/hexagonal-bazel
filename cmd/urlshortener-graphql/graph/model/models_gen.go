@@ -3,5 +3,5 @@
 package model
 
 type ShortenInput struct {
-	Secret *string `json:"secret"`
+	SecretRequired *bool `json:"secretRequired"`
 }

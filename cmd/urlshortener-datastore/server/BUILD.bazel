@@ -11,6 +11,7 @@ go_library(
         "//domain/urlshortener/link",
         "//infrastructure/clock",
         "//infrastructure/generator",
+        "//infrastructure/generator/passphrase",
         "//infrastructure/security/password",
     ],
 )

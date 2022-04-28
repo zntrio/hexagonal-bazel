@@ -54,7 +54,7 @@ func ResolveHandler(links link.Resolver, secretVerifier password.Verifier, clock
 			// Skip processing
 		case errors.Is(err, link.ErrLinkNotFound):
 			res.Error = serr.ResourceNotFound().Build()
-			return &res, nil
+			return &res, fmt.Errorf("link: link %q not found: %w", req.Id, err)
 		case err != nil:
 			res.Error = serr.ServerError(err).Build()
 			return &res, fmt.Errorf("link: unable to resolve %q: %w", req.Id, err)

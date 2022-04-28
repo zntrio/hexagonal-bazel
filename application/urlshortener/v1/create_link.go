@@ -31,10 +31,12 @@ type (
 const (
 	// maxURLLength defines the max URL length authorized to shorten.
 	maxURLLength = 2000
+	// expireLowerBound defines the minimum allowed for link expiration duration in seconds.
+	expireLowerBound = 30
 )
 
 // CreateHandler handles the urlshortener.Create request.
-func CreateHandler(links link.Repository, codeGenerator generator.Generator[string], secretEncoder password.Hasher, clockProvider clock.Clock) CreateHandlerFunc {
+func CreateHandler(links link.Repository, codeGenerator generator.Generator[string], secretEncoder password.Hasher, secretGenerator generator.Generator[string], clockProvider clock.Clock) CreateHandlerFunc {
 	return func(ctx context.Context, req *CreateRequest) (*CreateResponse, error) {
 		var res CreateResponse
 
@@ -104,9 +106,16 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 		}
 
 		// Secret required?
-		if req.Secret != nil {
+		if req.SecretRequired {
+			// Generate a secret
+			secret, err := secretGenerator.Generate()
+			if err != nil {
+				res.Error = serr.ServerError(err).Build()
+				return &res, fmt.Errorf("link: unable to generate secret: %w", err)
+			}
+
 			// Derive secret hash from the secret value.
-			sh, err := secretEncoder.Hash(*req.Secret)
+			sh, err := secretEncoder.Hash(secret)
 			if err != nil {
 				res.Error = serr.ServerError(err).Build()
 				return &res, fmt.Errorf("link: unable to compute secret hash: %w", err)
@@ -114,12 +123,15 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 
 			// Add the secret hash.
 			dopts = append(dopts, link.WithSecretHash(sh))
+
+			// Return generated secret
+			res.Secret = types.AsRef(secret)
 		}
 
 		// Expirable link
 		if req.ExpiresIn != nil {
 			// Validate expiration
-			if *req.ExpiresIn < 30 {
+			if *req.ExpiresIn < expireLowerBound {
 				res.Error = serr.InvalidRequest().Build(
 					serr.Description("The given expiration period is too short. It should be 30s at least."),
 					serr.Fields("expires_in"),
@@ -139,6 +151,7 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 
 		// Save to persistence
 		if err := links.Save(ctx, domainObject); err != nil {
+			res.Secret = nil
 			res.Error = serr.ServerError(err).Build()
 			return &res, fmt.Errorf("link: unable to create the shortened URL: %w", err)
 		}

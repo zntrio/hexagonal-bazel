@@ -17,8 +17,8 @@ func (r *mutationResolver) ShortenURL(ctx context.Context, url string, opts *mod
 	req := &urlshortenerv1.CreateRequest{
 		Url: url,
 	}
-	if opts != nil {
-		req.Secret = opts.Secret
+	if opts != nil && opts.SecretRequired != nil {
+		req.SecretRequired = *opts.SecretRequired
 	}
 
 	// Call datastore

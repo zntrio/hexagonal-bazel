@@ -960,6 +960,13 @@ def go_repositories():
         version = "v1.1.0",
     )
     go_repository(
+        name = "com_github_sethvargo_go_diceware",
+        importpath = "github.com/sethvargo/go-diceware",
+        sum = "h1:Dp1FZOYBPaJIzz8J2dUBqQnpd3DLsRR4ldBOFxiz4Gs=",
+        version = "v0.2.1",
+    )
+
+    go_repository(
         name = "com_github_shurcool_sanitized_anchor_name",
         importpath = "github.com/shurcooL/sanitized_anchor_name",
         sum = "h1:PdmoCO6wvbs+7yrJyMORt4/BmY5IYyJwS/kOiWx8mHo=",

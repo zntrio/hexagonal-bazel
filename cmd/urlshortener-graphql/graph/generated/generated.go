@@ -224,8 +224,8 @@ type Link {
 }
 # The input object sent when someone is shortening an URL
 input ShortenInput {
-    # OPTIONAL. Secret to protect the URL resolution.
-    secret: String
+    # OPTIONAL. Generate a secret to protect the URL resolution.
+    secretRequired: Boolean
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -2567,11 +2567,11 @@ func (ec *executionContext) unmarshalInputShortenInput(ctx context.Context, obj 
 
 	for k, v := range asMap {
 		switch k {
-		case "secret":
+		case "secretRequired":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("secret"))
-			it.Secret, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("secretRequired"))
+			it.SecretRequired, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}

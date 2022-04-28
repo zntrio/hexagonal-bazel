@@ -18,6 +18,6 @@ type Link {
 }
 # The input object sent when someone is shortening an URL
 input ShortenInput {
-    # OPTIONAL. Secret to protect the URL resolution.
-    secret: String
+    # OPTIONAL. Generate a secret to protect the URL resolution.
+    secretRequired: Boolean
 }
