@@ -9,10 +9,10 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"zntr.io/hexagonal-bazel/cmd/urlshortener-graphql/graph"
-	"zntr.io/hexagonal-bazel/cmd/urlshortener-graphql/graph/generated"
 
 	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
+	"zntr.io/hexagonal-bazel/cmd/urlshortener-graphql/graph"
+	"zntr.io/hexagonal-bazel/cmd/urlshortener-graphql/graph/generated"
 )
 
 const defaultPort = "8080"

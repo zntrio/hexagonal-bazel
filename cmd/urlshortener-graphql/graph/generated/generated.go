@@ -14,6 +14,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/introspection"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
+
 	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/cmd/urlshortener-graphql/graph/model"
 )
@@ -40,8 +41,7 @@ type ResolverRoot interface {
 	Query() QueryResolver
 }
 
-type DirectiveRoot struct {
-}
+type DirectiveRoot struct{}
 
 type ComplexityRoot struct {
 	Link struct {

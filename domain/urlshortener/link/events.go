@@ -1,11 +1,11 @@
 package link
 
 import (
+	"github.com/GoWebProd/uuid7"
 	"google.golang.org/protobuf/types/known/anypb"
+
 	eventsv1 "zntr.io/hexagonal-bazel/api/system/events/v1"
 	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
-
-	"github.com/GoWebProd/uuid7"
 )
 
 // Created generates an event to notify shortened link creation.

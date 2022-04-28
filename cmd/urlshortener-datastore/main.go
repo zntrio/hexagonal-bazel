@@ -11,6 +11,7 @@ import (
 	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/cmd/urlshortener-datastore/server"
 	"zntr.io/hexagonal-bazel/infrastructure/datastore/badger"
+	"zntr.io/hexagonal-bazel/infrastructure/generator/passphrase"
 	"zntr.io/hexagonal-bazel/infrastructure/generator/shortid"
 	"zntr.io/hexagonal-bazel/infrastructure/security/password"
 )
@@ -41,6 +42,7 @@ func main() {
 			badger.Links(store),
 			shortid.New(1),
 			password.Argon2(),
+			passphrase.Diceware(6),
 		),
 	)
 

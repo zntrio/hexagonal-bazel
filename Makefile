@@ -33,17 +33,17 @@ bazel-test:
 bazel-test-nocache:
 	$(BAZEL) test --cache_test_results=no //...
 
-bin/protoc-gen-go:
-	GOBIN=$(shell pwd)/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.0
+.PHONY: install-tools
+install-tools:
+	go generate ./tools.go
 
-bin/protoc-gen-go-grpc: bin/protoc-gen-go
-	GOBIN=$(shell pwd)/bin go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-
-bin/gqlgen: 
-	GOBIN=$(shell pwd)/bin go install github.com/99designs/gqlgen@v0.17
+.PHONY: code-format
+code-format:
+	gofumpt -w -l .
+	gci write --Section Standard --Section Default --Section "Prefix(zntr.io/hexagonal-bazel)" .
 
 .PHONY: regenerate-api
-regenerate-api: bin/protoc-gen-go bin/protoc-gen-go-grpc
+regenerate-api: install-tools
 	rm -rf $(PROTO_API_DIR) 2>/dev/null
 	mkdir $(PROTO_API_DIR)
 	protoc -I $(PROTO_SRC_DIR) \

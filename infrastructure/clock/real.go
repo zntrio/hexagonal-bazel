@@ -6,8 +6,7 @@ func Real() Clock {
 	return &realClock{}
 }
 
-type realClock struct {
-}
+type realClock struct{}
 
 func (rt *realClock) Now() time.Time {
 	return time.Now().UTC()

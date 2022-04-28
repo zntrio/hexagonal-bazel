@@ -2,6 +2,7 @@ package v1
 
 import (
 	"google.golang.org/protobuf/types/known/timestamppb"
+
 	urlshortener "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
 	"zntr.io/hexagonal-bazel/pkg/types"

@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/timshannon/badgerhold/v4"
+
 	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
 	"zntr.io/hexagonal-bazel/pkg/types"
-
-	"github.com/timshannon/badgerhold/v4"
 )
 
 // Links returns a badger implementation of the repository.

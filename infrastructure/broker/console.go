@@ -11,8 +11,7 @@ func Console() EventPublisher {
 	return &consolePublisher{}
 }
 
-type consolePublisher struct {
-}
+type consolePublisher struct{}
 
 func (p *consolePublisher) Publish(ctx context.Context, e *eventsv1.Event) error {
 	fmt.Printf("Publishing event: %+v", e)

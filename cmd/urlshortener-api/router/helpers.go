@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
+
 	"zntr.io/hexagonal-bazel/infrastructure/serr"
 	"zntr.io/hexagonal-bazel/pkg/types"
 )

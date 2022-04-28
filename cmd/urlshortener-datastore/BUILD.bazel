@@ -9,6 +9,7 @@ go_library(
         "//api/urlshortener/v1:urlshortener",
         "//cmd/urlshortener-datastore/server",
         "//infrastructure/datastore/badger",
+        "//infrastructure/generator/passphrase",
         "//infrastructure/generator/shortid",
         "//infrastructure/security/password",
         "@com_github_timshannon_badgerhold_v4//:badgerhold",

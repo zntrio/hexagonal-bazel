@@ -3,11 +3,11 @@ package main
 import (
 	"log"
 
-	eventsv1 "zntr.io/hexagonal-bazel/api/system/events/v1"
-	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
-
 	"github.com/nats-io/nats.go"
 	"google.golang.org/protobuf/proto"
+
+	eventsv1 "zntr.io/hexagonal-bazel/api/system/events/v1"
+	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 )
 
 const (

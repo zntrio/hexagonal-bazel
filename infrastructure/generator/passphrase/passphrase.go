@@ -9,7 +9,9 @@ import (
 	"zntr.io/hexagonal-bazel/infrastructure/generator"
 )
 
-func Diceware(wordCount int) generator.Generator[string] {
+type Generator generator.Generator[string]
+
+func Diceware(wordCount int) Generator {
 	return &dicewareGenerator{
 		wordCount: wordCount,
 	}

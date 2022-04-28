@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+
 	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 )
 

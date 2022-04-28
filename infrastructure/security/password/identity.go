@@ -7,8 +7,7 @@ func Identity() Strategy {
 
 // -----------------------------------------------------------------------------
 
-type identityStrategy struct {
-}
+type identityStrategy struct{}
 
 func (s *identityStrategy) Hash(input string) (string, error) {
 	return input, nil

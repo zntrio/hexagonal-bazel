@@ -10,8 +10,7 @@ func NoOP() EventPublisher {
 	return &noopPublisher{}
 }
 
-type noopPublisher struct {
-}
+type noopPublisher struct{}
 
 func (p *noopPublisher) Publish(ctx context.Context, e *eventsv1.Event) error {
 	// Do nothing
