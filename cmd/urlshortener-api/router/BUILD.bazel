@@ -10,11 +10,13 @@ go_library(
     importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-api/router",
     visibility = ["//visibility:public"],
     deps = [
+        "//api/system/errors/v1:errors",
         "//api/urlshortener/v1:urlshortener",
         "//infrastructure/serr",
         "//pkg/types",
         "@com_github_go_chi_chi_v5//:chi",
         "@org_golang_google_grpc//:go_default_library",
+        "@org_golang_google_grpc//status",
         "@org_golang_google_protobuf//encoding/protojson",
         "@org_golang_google_protobuf//proto",
     ],

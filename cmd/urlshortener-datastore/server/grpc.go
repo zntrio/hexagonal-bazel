@@ -2,6 +2,10 @@ package server
 
 import (
 	"context"
+	"fmt"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	apiurlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	urlshortenerv1 "zntr.io/hexagonal-bazel/application/urlshortener/v1"
@@ -29,7 +33,18 @@ type urlShortenerServer struct {
 
 // Create a shortened link from the given URL.
 func (s *urlShortenerServer) Create(ctx context.Context, req *urlshortenerv1.CreateRequest) (*urlshortenerv1.CreateResponse, error) {
-	return s.createHandler(ctx, req)
+	res, err := s.createHandler(ctx, req)
+	if err == nil {
+		return res, nil
+	}
+
+	st := status.New(codes.FailedPrecondition, res.Error.ErrorCode)
+	st, err = st.WithDetails(res.Error)
+	if err != nil {
+		panic(fmt.Sprintf("Unexpected error attaching metadata: %v", err))
+	}
+
+	return res, st.Err()
 }
 
 // Resolve the shortened URL.

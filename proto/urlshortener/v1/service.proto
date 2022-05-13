@@ -18,6 +18,7 @@ message CreateRequest {
     string url = 1;
     bool secret_required = 2;
     optional uint64 expires_in = 3;
+    optional string slug = 4;
     bool validate_only = 99;
 }
 

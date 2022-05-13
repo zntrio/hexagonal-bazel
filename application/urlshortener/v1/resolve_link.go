@@ -27,7 +27,7 @@ type (
 // ResolveHandler handles the urlshortener.Resolve request.
 func ResolveHandler(links link.Resolver, secretVerifier password.Verifier, clockProvider clock.Clock) ResolveHandlerFunc {
 	return func(ctx context.Context, req *ResolveRequest) (*ResolveResponse, error) {
-		var res ResolveResponse
+		res := ResolveResponse{}
 
 		// Check arguments
 		if req == nil {

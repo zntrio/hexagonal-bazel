@@ -5,6 +5,12 @@ go_library(
     srcs = ["main.go"],
     importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-syncer",
     visibility = ["//visibility:private"],
+    deps = [
+        "//api/system/events/v1:events",
+        "//api/urlshortener/v1:urlshortener",
+        "@com_github_nats_io_nats_go//:nats_go",
+        "@org_golang_google_protobuf//proto",
+    ],
 )
 
 go_binary(

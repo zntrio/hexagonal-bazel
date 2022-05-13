@@ -13,5 +13,7 @@ go_library(
         "//infrastructure/generator",
         "//infrastructure/generator/passphrase",
         "//infrastructure/security/password",
+        "@org_golang_google_grpc//codes",
+        "@org_golang_google_grpc//status",
     ],
 )

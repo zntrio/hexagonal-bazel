@@ -5,16 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 	"unicode/utf8"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
+	"github.com/gosimple/slug"
 
-	urlshortener "zntr.io/hexagonal-bazel/api/urlshortener/v1"
+	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
 	"zntr.io/hexagonal-bazel/infrastructure/clock"
 	"zntr.io/hexagonal-bazel/infrastructure/generator"
+	"zntr.io/hexagonal-bazel/infrastructure/generator/passphrase"
 	"zntr.io/hexagonal-bazel/infrastructure/reactor"
 	"zntr.io/hexagonal-bazel/infrastructure/security/password"
 	"zntr.io/hexagonal-bazel/infrastructure/serr"
@@ -23,8 +26,8 @@ import (
 
 // Type aliases
 type (
-	CreateRequest     = urlshortener.CreateRequest
-	CreateResponse    = urlshortener.CreateResponse
+	CreateRequest     = urlshortenerv1.CreateRequest
+	CreateResponse    = urlshortenerv1.CreateResponse
 	CreateHandlerFunc = reactor.Handler[CreateRequest, CreateResponse]
 )
 
@@ -32,13 +35,15 @@ const (
 	// maxURLLength defines the max URL length authorized to shorten.
 	maxURLLength = 2000
 	// expireLowerBound defines the minimum allowed for link expiration duration in seconds.
-	expireLowerBound = 30
+	expireLowerBound = 30 // 30s
+	// expireUpperBound defines the maximum allowed for link expiration duration in seconds.
+	expireUpperBound = 7 * 24 * 60 * 60 // 7 days
 )
 
 // CreateHandler handles the urlshortener.Create request.
-func CreateHandler(links link.Repository, codeGenerator generator.Generator[string], secretEncoder password.Hasher, secretGenerator generator.Generator[string], clockProvider clock.Clock) CreateHandlerFunc {
-	return func(ctx context.Context, req *CreateRequest) (*CreateResponse, error) {
-		var res CreateResponse
+func CreateHandler(links link.Repository, codeGenerator generator.Generator[string], secretEncoder password.Hasher, secretGenerator passphrase.Generator, clockProvider clock.Clock) CreateHandlerFunc {
+	return func(ctx context.Context, req *urlshortenerv1.CreateRequest) (*urlshortenerv1.CreateResponse, error) {
+		res := urlshortenerv1.CreateResponse{}
 
 		// Check arguments
 		if req == nil {
@@ -51,6 +56,8 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 		if err := validation.ValidateStruct(req,
 			// URL is mandatory and must contain a valid URL syntax.
 			validation.Field(&req.Url, validation.Required, is.URL),
+			// Slug must be ascii only
+			validation.Field(&req.Slug, is.PrintableASCII, validation.Length(5, 50)),
 		); err != nil {
 			res.Error = serr.InvalidRequest().Build(
 				serr.InternalErr(err),
@@ -82,28 +89,65 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 
 		// Skip operation if in validation mode
 		if req.ValidateOnly {
-			res.Link = &urlshortener.Link{
+			res.Link = &urlshortenerv1.Link{
 				Url: types.AsRef(u.String()),
 			}
 			return &res, nil
 		}
 
-		// Create a public identifier
-		code, err := codeGenerator.Generate()
-		if err != nil {
-			res.Error = serr.ServerError(err).Build()
-			return &res, fmt.Errorf("link: unable to generate public identifier: %w", err)
-		}
-
 		// Set required properties
 		dopts := []link.DomainOption{
-			// Generate a new identifier
-			link.WithID(link.ID(code)),
 			// Use parsed URL to normalize it
 			link.WithURL(u.String()),
 			// Set creation date
 			link.WithCreatedAt(clockProvider.Now()),
 		}
+
+		linkID := ""
+
+		// Has specific slug
+		if req.Slug != nil {
+			// Set slug value
+			linkID = strings.ToLower(strings.TrimSpace(*req.Slug))
+
+			// Check slug syntax
+			if !slug.IsSlug(linkID) {
+				res.Error = serr.InvalidRequest().Build(
+					serr.Descriptionf("The given slug value %q has not a valid syntax.", linkID),
+					serr.Fields("slug"),
+				)
+				return &res, fmt.Errorf("link: invalid slug identifier: %w", err)
+			}
+
+			// Ensure link ID uniquenss
+			_, err = links.GetByID(ctx, link.ID(linkID))
+			switch {
+			case errors.Is(err, link.ErrLinkNotFound):
+				// Expected
+			case err != nil:
+				res.Error = serr.ServerError(err).Build()
+				return &res, fmt.Errorf("link: unable to ensure link identifier uniqueness: %w", err)
+			case err == nil:
+				res.Error = serr.InvalidRequest().Build(
+					serr.Description("The slug must be unique."),
+					serr.Fields("slug"),
+				)
+				return &res, fmt.Errorf("link: unable to ensure link identifier uniqueness %q", linkID)
+			}
+		} else {
+			// Create a public identifier
+			code, err := codeGenerator.Generate()
+			if err != nil {
+				res.Error = serr.ServerError(err).Build()
+				return &res, fmt.Errorf("link: unable to generate public identifier: %w", err)
+			}
+
+			// Set generated link identifier
+			linkID = code
+		}
+
+		// Add link identifier.
+		dopts = append(dopts, link.WithID(link.ID(linkID)))
 
 		// Secret required?
 		if req.SecretRequired {
@@ -131,9 +175,12 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 		// Expirable link
 		if req.ExpiresIn != nil {
 			// Validate expiration
-			if *req.ExpiresIn < expireLowerBound {
+			if *req.ExpiresIn < expireLowerBound || *req.ExpiresIn > expireUpperBound {
 				res.Error = serr.InvalidRequest().Build(
-					serr.Description("The given expiration period is too short. It should be 30s at least."),
+					serr.Descriptionf(
+						"The given expiration period is too short. It should be %d as minimum and %d as maximum value.",
+						expireLowerBound, expireUpperBound,
+					),
 					serr.Fields("expires_in"),
 				)
 				return &res, fmt.Errorf("link: expiration too short for %q: %w", req.Url, err)
