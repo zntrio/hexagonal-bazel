@@ -8,7 +8,7 @@ option go_package = "zntr.io/hexagonal-bazel/api/urlshortener/v1;urlshortenerv1"
 
 // Link describes the shortened link attributes.
 message Link {
-    // Public link identifier. 
+    // Public link identifier.
     string id = 1;
     // Complete URL aliases by the short-link.
     optional string url = 2;

@@ -11,6 +11,7 @@ import (
 	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 	"zntr.io/hexagonal-bazel/cmd/urlshortener-graphql/graph/generated"
 	"zntr.io/hexagonal-bazel/cmd/urlshortener-graphql/graph/model"
+	"zntr.io/hexagonal-bazel/pkg/types"
 )
 
 func (r *mutationResolver) ShortenURL(ctx context.Context, url string, opts *model.ShortenInput) (*urlshortenerv1.Link, error) {
@@ -19,6 +20,9 @@ func (r *mutationResolver) ShortenURL(ctx context.Context, url string, opts *mod
 	}
 	if opts != nil && opts.SecretRequired != nil {
 		req.SecretRequired = *opts.SecretRequired
+	}
+	if opts != nil && opts.ExpiresIn != nil {
+		req.ExpiresIn = types.AsRef(uint64(*opts.ExpiresIn))
 	}
 
 	// Call datastore
@@ -86,7 +90,5 @@ func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResol
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
-type (
-	mutationResolver struct{ *Resolver }
-	queryResolver    struct{ *Resolver }
-)
+type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }

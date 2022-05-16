@@ -44,5 +44,8 @@ func main() {
 		sr.Post("/links/{id}", router.ResolveSecretLink(dsClient))
 	})
 
+	// Catch-all handler
+	r.Handle("/*", router.Home(dsClient))
+
 	http.ListenAndServe(":3000", r)
 }

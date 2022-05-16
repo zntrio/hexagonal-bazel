@@ -49,5 +49,16 @@ func (s *urlShortenerServer) Create(ctx context.Context, req *urlshortenerv1.Cre
 
 // Resolve the shortened URL.
 func (s *urlShortenerServer) Resolve(ctx context.Context, req *urlshortenerv1.ResolveRequest) (*urlshortenerv1.ResolveResponse, error) {
-	return s.resolveHandler(ctx, req)
+	res, err := s.resolveHandler(ctx, req)
+	if err == nil {
+		return res, nil
+	}
+
+	st := status.New(codes.FailedPrecondition, res.Error.ErrorCode)
+	st, err = st.WithDetails(res.Error)
+	if err != nil {
+		panic(fmt.Sprintf("Unexpected error attaching metadata: %v", err))
+	}
+
+	return res, st.Err()
 }

@@ -206,6 +206,9 @@ func CreateHandler(links link.Repository, codeGenerator generator.Generator[stri
 		// Prepare response
 		res.Link = fromLink(domainObject)
 
+		// Overwrite link identifier with the given one
+		res.Link.Id = linkID
+
 		// No error
 		return &res, nil
 	}

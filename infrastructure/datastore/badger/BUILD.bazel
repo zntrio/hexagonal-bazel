@@ -9,5 +9,6 @@ go_library(
         "//domain/urlshortener/link",
         "//pkg/types",
         "@com_github_timshannon_badgerhold_v4//:badgerhold",
+        "@org_golang_x_crypto//blake2b",
     ],
 )

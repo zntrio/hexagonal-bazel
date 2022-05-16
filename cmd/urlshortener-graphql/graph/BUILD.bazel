@@ -12,5 +12,6 @@ go_library(
         "//api/urlshortener/v1:urlshortener",
         "//cmd/urlshortener-graphql/graph/generated",
         "//cmd/urlshortener-graphql/graph/model",
+        "//pkg/types",
     ],
 )

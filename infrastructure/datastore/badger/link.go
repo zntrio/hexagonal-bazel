@@ -2,14 +2,20 @@ package badger
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"time"
 
 	"github.com/timshannon/badgerhold/v4"
+	"golang.org/x/crypto/blake2b"
 
 	"zntr.io/hexagonal-bazel/domain/urlshortener/link"
 	"zntr.io/hexagonal-bazel/pkg/types"
+)
+
+var (
+	seedKey = []byte("I<%|J/Fs\\(%rhU4kE!v+W<:|%-`@aZw7uyb*3f8I?pK'9=w&,lPL6Ds#bI?PW.$")
 )
 
 // Links returns a badger implementation of the repository.
@@ -53,8 +59,13 @@ func (r *linkRepository) GetByID(ctx context.Context, id link.ID) (link.Link, er
 	// Create a transaction
 	tx := r.db.Badger().NewTransaction(false)
 
+	// Compute ID due to the fact that this information could be given by the
+	// user. We have to enforce the confidentiality of the ID in the case the
+	// user registered it with sensitive data.
+	nid := r.computeID(id)
+
 	var result linkEntity
-	if err := r.db.TxGet(tx, id, &result); err != nil {
+	if err := r.db.TxGet(tx, nid, &result); err != nil {
 		if errors.Is(err, badgerhold.ErrNotFound) {
 			return nil, link.ErrLinkNotFound
 		}
@@ -76,9 +87,14 @@ func (r *linkRepository) Save(ctx context.Context, domain link.Link) error {
 		return errors.New("badger: unable to save a nil link")
 	}
 
+	// Compute ID due to the fact that this information could be given by the
+	// user. We have to enforce the confidentiality of the ID in the case the
+	// user registered it with sensitive data.
+	id := r.computeID(domain.GetID())
+
 	// Convert to entity
 	entity := &linkEntity{
-		ID:         string(domain.GetID()),
+		ID:         id,
 		URL:        domain.GetURL(),
 		SecretHash: domain.GetSecretHash(),
 		CreatedAt:  domain.GetCreatedAt(),
@@ -89,7 +105,7 @@ func (r *linkRepository) Save(ctx context.Context, domain link.Link) error {
 	tx := r.db.Badger().NewTransaction(true)
 
 	// Insert or update.
-	if err := r.db.TxUpsert(tx, entity.GetID(), entity); err != nil {
+	if err := r.db.TxUpsert(tx, id, entity); err != nil {
 		return fmt.Errorf("badger: %v: %w", err, link.ErrUnableToSaveLink)
 	}
 
@@ -100,4 +116,23 @@ func (r *linkRepository) Save(ctx context.Context, domain link.Link) error {
 
 	// No error
 	return nil
+}
+
+// -----------------------------------------------------------------------------
+
+func (r *linkRepository) computeID(id link.ID) string {
+	// Prepare keyed blake2b
+	h, err := blake2b.New256(seedKey)
+	if err != nil {
+		panic(err)
+	}
+
+	// Add domain separation to ensure unique result on key reuse.
+	// Domain || 0x00 || ID
+	h.Write([]byte("urlshortener:v1:link"))
+	h.Write([]byte{0x00})
+	h.Write([]byte(id))
+
+	// Encode result as raw base64 url.
+	return base64.RawURLEncoding.EncodeToString(h.Sum(nil))
 }

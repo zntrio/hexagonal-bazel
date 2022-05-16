@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -36,10 +37,13 @@ func ResolveHandler(links link.Resolver, secretVerifier password.Verifier, clock
 			return &res, err
 		}
 
+		// Normalize input
+		req.Id = strings.TrimSpace(req.Id)
+
 		// Validate request
 		if err := validation.ValidateStruct(req,
 			// ID is mandatory and must contain a valid ascii string.
-			validation.Field(&req.Id, validation.Required, is.ASCII),
+			validation.Field(&req.Id, validation.Required, is.PrintableASCII),
 		); err != nil {
 			res.Error = serr.InvalidRequest().Build(
 				serr.InternalErr(err),
@@ -87,6 +91,9 @@ func ResolveHandler(links link.Resolver, secretVerifier password.Verifier, clock
 
 		// Prepare response
 		res.Link = fromLink(m)
+
+		// Overwrite link identifier with the given one
+		res.Link.Id = req.Id
 
 		// No error
 		return &res, nil

@@ -4,4 +4,5 @@ package model
 
 type ShortenInput struct {
 	SecretRequired *bool `json:"secretRequired"`
+	ExpiresIn      *int  `json:"expiresIn"`
 }
