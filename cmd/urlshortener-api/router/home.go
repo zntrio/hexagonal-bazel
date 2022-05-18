@@ -1,7 +1,7 @@
 package router
 
 import (
-	"encoding/json"
+	"html/template"
 	"net/http"
 	"strings"
 
@@ -11,23 +11,16 @@ import (
 )
 
 // Home handles link resolution from the browser
-func Home(shortener urlshortenerv1.ShortenerAPIClient) http.HandlerFunc {
-
+func Home(shortener urlshortenerv1.ShortenerAPIClient, templates *template.Template) http.HandlerFunc {
 	var displayError = func(w http.ResponseWriter, r *http.Request, err error) {
 		if err != nil {
 			st := status.Convert(err)
 			for _, detail := range st.Details() {
 				switch t := detail.(type) {
 				case *errorsv1.Error:
-					// Set the HTTP code
-					w.WriteHeader(int(t.StatusCode))
-
-					// Send error as json
-					if err := json.NewEncoder(w).Encode(t); err != nil {
-						http.Error(w, "Unable to serialize service error", http.StatusInternalServerError)
-						return
+					if err := templates.ExecuteTemplate(w, "error.html", t); err != nil {
+						panic(err)
 					}
-
 					return
 				default:
 					continue

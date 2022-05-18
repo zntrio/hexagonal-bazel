@@ -1,58 +1,41 @@
 package main
 
 import (
+	"context"
 	"errors"
-	"log"
-	"net"
+	"fmt"
+	"os/signal"
+	"syscall"
 
-	"github.com/timshannon/badgerhold/v4"
-	"google.golang.org/grpc"
-
-	urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
-	"zntr.io/hexagonal-bazel/cmd/urlshortener-datastore/server"
-	"zntr.io/hexagonal-bazel/infrastructure/datastore/badger"
-	"zntr.io/hexagonal-bazel/infrastructure/generator/passphrase"
-	"zntr.io/hexagonal-bazel/infrastructure/generator/shortid"
-	"zntr.io/hexagonal-bazel/infrastructure/security/password"
+	"golang.org/x/sync/errgroup"
+	"zntr.io/hexagonal-bazel/cmd/urlshortener-datastore/actor"
 )
 
 func main() {
-	// Create the listener
-	lis, err := net.Listen("tcp", "localhost:3001")
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 
-	// Create data repository
-	options := badgerhold.DefaultOptions
-	options.Dir = "data"
-	options.ValueDir = "data"
+	g, gctx := errgroup.WithContext(ctx)
 
-	store, err := badgerhold.Open(options)
-	defer store.Close()
-	if err != nil {
-		// handle error
-		log.Fatal(err)
-	}
+	// Prepare the actor
+	dataStore := actor.Datastore(actor.DefaultConfiguration())
 
-	// Initialize gRPC server
-	grpcServer := grpc.NewServer()
-	urlshortenerv1.RegisterShortenerAPIServer(grpcServer,
-		server.New(
-			badger.Links(store),
-			shortid.New(1),
-			password.Argon2(),
-			passphrase.Diceware(6),
-		),
-	)
+	// Start the datastore actor
+	g.Go(func() error { return dataStore.Run(gctx) })
 
-	// Serve
-	if err := grpcServer.Serve(lis); err != nil {
-		switch {
-		case errors.Is(err, grpc.ErrServerStopped):
-			return
-		default:
-			log.Fatal(err)
-		}
+	// Graceful stop goroutine
+	g.Go(func() error {
+		<-gctx.Done()
+		stop()
+		return dataStore.Close()
+	})
+
+	// Wait for all errgroup goroutines
+	err := g.Wait()
+	switch {
+	case err == nil, errors.Is(err, context.Canceled):
+		fmt.Println("finished clean")
+	case err != nil:
+		fmt.Printf("received error: %v", err)
 	}
 }

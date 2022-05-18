@@ -1,0 +1,25 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "actor",
+    srcs = [
+        "actor.go",
+        "api.go",
+        "config.go",
+    ],
+    importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-datastore/actor",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/urlshortener/v1:urlshortener",
+        "//cmd/urlshortener-datastore/actor/server",
+        "//infrastructure/datastore/badger",
+        "//infrastructure/generator/passphrase",
+        "//infrastructure/generator/shortid",
+        "//infrastructure/security/password",
+        "@com_github_hashicorp_go_multierror//:go-multierror",
+        "@com_github_mcuadros_go_defaults//:go-defaults",
+        "@com_github_timshannon_badgerhold_v4//:badgerhold",
+        "@org_golang_google_grpc//:go_default_library",
+        "@org_golang_x_sync//errgroup",
+    ],
+)

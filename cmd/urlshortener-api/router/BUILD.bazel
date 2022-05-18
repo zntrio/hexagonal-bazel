@@ -6,6 +6,7 @@ go_library(
         "create_link.go",
         "helpers.go",
         "home.go",
+        "not_found.go",
         "resolve_link.go",
     ],
     importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-api/router",

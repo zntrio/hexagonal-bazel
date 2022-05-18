@@ -3,6 +3,10 @@ load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 go_library(
     name = "urlshortener-api_lib",
     srcs = ["main.go"],
+    embedsrcs = [
+        "static/error.html",
+        "static/index.html",
+    ],
     importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-api",
     visibility = ["//visibility:private"],
     deps = [

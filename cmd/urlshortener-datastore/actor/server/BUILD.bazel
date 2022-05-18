@@ -3,7 +3,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "server",
     srcs = ["grpc.go"],
-    importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-datastore/server",
+    importpath = "zntr.io/hexagonal-bazel/cmd/urlshortener-datastore/actor/server",
     visibility = ["//visibility:public"],
     deps = [
         "//api/urlshortener/v1:urlshortener",

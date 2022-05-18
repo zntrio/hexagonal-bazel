@@ -1773,6 +1773,13 @@ def go_repositories():
         version = "v1.2.0",
     )
     go_repository(
+        name = "com_github_mcuadros_go_defaults",
+        importpath = "github.com/mcuadros/go-defaults",
+        sum = "h1:FODb8WSf0uGaY8elWJAkoLL0Ri6AlZ1bFlenk56oZtc=",
+        version = "v1.2.0",
+    )
+
+    go_repository(
         name = "com_github_mgechev_dots",
         importpath = "github.com/mgechev/dots",
         sum = "h1:zpIH83+oKzcpryru8ceC6BxnoG8TBrhgAvRg8obzup0=",
