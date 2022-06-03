@@ -7,5 +7,5 @@ import urlshortenerv1 "zntr.io/hexagonal-bazel/api/urlshortener/v1"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	ShortenerAClient urlshortenerv1.ShortenerAPIClient
+	ShortenerAClient urlshortenerv1.ShortenerServiceClient
 }

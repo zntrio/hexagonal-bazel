@@ -31,7 +31,7 @@ func main() {
 	defer conn.Close()
 
 	// Create grpc client
-	dsClient := urlshortenerv1.NewShortenerAPIClient(conn)
+	dsClient := urlshortenerv1.NewShortenerServiceClient(conn)
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{
 		ShortenerAClient: dsClient,

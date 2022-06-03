@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "urlshortenerv1connect",
+    srcs = ["service.connect.go"],
+    importpath = "zntr.io/hexagonal-bazel/api/urlshortener/v1/urlshortenerv1connect",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/urlshortener/v1:urlshortener",
+        "@com_github_bufbuild_connect_go//:connect-go",
+    ],
+)

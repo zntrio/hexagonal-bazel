@@ -53,7 +53,7 @@ func (a *dataStoreActor) Run(ctx context.Context) error {
 
 	// Initialize gRPC server
 	a.grpcServer = grpc.NewServer()
-	urlshortenerv1.RegisterShortenerAPIServer(a.grpcServer,
+	urlshortenerv1.RegisterShortenerServiceServer(a.grpcServer,
 		server.New(
 			badger.Links(store),
 			shortid.New(a.cfg.Generator.WorkerID),

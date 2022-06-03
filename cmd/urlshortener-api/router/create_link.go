@@ -9,7 +9,7 @@ import (
 )
 
 // CreateLink handles POST /links
-func CreateLink(shortener urlshortenerv1.ShortenerAPIClient) http.HandlerFunc {
+func CreateLink(shortener urlshortenerv1.ShortenerServiceClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Check method
 		if r.Method != http.MethodPost {

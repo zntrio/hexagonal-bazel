@@ -1,19 +1,19 @@
 syntax = "proto3";
 
-package cloud.system.errors.v1;
+package system.errors.v1;
 
 option go_package = "zntr.io/hexagonal-bazel/api/system/errors/v1;errorsv1";
 
 // Error represents service error object.
 message Error {
-    // Error status code expressed using HTTP Status Codes.
-    int32 status_code = 1;
-    // Error code expressed using a snakecase string.
-    string error_code = 2;
-    // Error description.
-    string error_description = 3;
-    // Error URI for additional information.
-    string error_uri = 4;
-    // Fields conserned by the error.
-    repeated string fields = 5;
-  }
+  // Error status code expressed using HTTP Status Codes.
+  int32 status_code = 1;
+  // Error code expressed using a snakecase string.
+  string error_code = 2;
+  // Error description.
+  string error_description = 3;
+  // Error URI for additional information.
+  string error_uri = 4;
+  // Fields conserned by the error.
+  repeated string fields = 5;
+}

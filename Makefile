@@ -50,7 +50,9 @@ regenerate-api: install-tools
 		--experimental_allow_proto3_optional \
 		--plugin=protoc-gen-go=bin/protoc-gen-go \
 		--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+		--plugin=protoc-gen-connect-go=bin/protoc-gen-connect-go \
 		--go_opt=paths=source_relative --go_out=$(PROTO_API_DIR) \
 		--go-grpc_opt=paths=source_relative --go-grpc_out=$(PROTO_API_DIR) \
+		--go-connect_opt=paths=source_relative --go-connect_out=$(PROTO_API_DIR) \
 		$(shell find $(PROTO_SRC_DIR) -iname "*.proto")
 

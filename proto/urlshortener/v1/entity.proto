@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package cloud.urlshortener.v1;
+package urlshortener.v1;
 
 import "google/protobuf/timestamp.proto";
 
@@ -8,12 +8,12 @@ option go_package = "zntr.io/hexagonal-bazel/api/urlshortener/v1;urlshortenerv1"
 
 // Link describes the shortened link attributes.
 message Link {
-    // Public link identifier.
-    string id = 1;
-    // Complete URL aliases by the short-link.
-    optional string url = 2;
-    // Link is password protected?
-    bool secret_required = 3;
-    // Link expiration date.
-    optional google.protobuf.Timestamp expires_at = 4;
+  // Public link identifier.
+  string id = 1;
+  // Complete URL aliases by the short-link.
+  optional string url = 2;
+  // Link is password protected?
+  bool secret_required = 3;
+  // Link expiration date.
+  optional google.protobuf.Timestamp expires_at = 4;
 }

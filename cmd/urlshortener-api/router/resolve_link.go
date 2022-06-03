@@ -11,7 +11,7 @@ import (
 )
 
 // ResolveLink handles GET /links/{id}
-func ResolveLink(shortener urlshortenerv1.ShortenerAPIClient) http.HandlerFunc {
+func ResolveLink(shortener urlshortenerv1.ShortenerServiceClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Check method
 		if r.Method != http.MethodGet {
@@ -30,7 +30,7 @@ func ResolveLink(shortener urlshortenerv1.ShortenerAPIClient) http.HandlerFunc {
 }
 
 // ResolveSecretLink handles POST /links/{id}
-func ResolveSecretLink(shortener urlshortenerv1.ShortenerAPIClient) http.HandlerFunc {
+func ResolveSecretLink(shortener urlshortenerv1.ShortenerServiceClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Check method
 		if r.Method != http.MethodPost {

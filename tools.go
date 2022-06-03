@@ -5,6 +5,8 @@ package tools
 
 import (
 	_ "github.com/99designs/gqlgen"
+	_ "github.com/bufbuild/buf/cmd/buf"
+	_ "github.com/bufbuild/connect-go/cmd/protoc-gen-connect-go"
 	_ "github.com/daixiang0/gci"
 	_ "github.com/frapposelli/wwhrd"
 	_ "github.com/golang/mock/mockgen"
@@ -24,4 +26,8 @@ import (
 //go:generate go build -v -o=./bin/mockgen github.com/golang/mock/mockgen
 //go:generate go build -v -o=./bin/golangci-lint github.com/golangci/golangci-lint/cmd/golangci-lint
 //go:generate go build -v -o=./bin/gotestsum gotest.tools/gotestsum
+//go:generate go build -v -o=./bin/buf github.com/bufbuild/buf/cmd/buf
+//go:generate go build -v -o=./bin/protoc-gen-go google.golang.org/protobuf/cmd/protoc-gen-go
+//go:generate go build -v -o=./bin/protoc-gen-go-grpc google.golang.org/grpc/cmd/protoc-gen-go-grpc
+//go:generate go build -v -o=./bin/protoc-gen-connect-go github.com/bufbuild/connect-go/cmd/protoc-gen-connect-go
 //go:generate go build -v -o=./bin/gofumpt mvdan.cc/gofumpt

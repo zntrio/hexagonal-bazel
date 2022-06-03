@@ -1,0 +1,18 @@
+version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: zntr.io/hexagonal-bazel/api
+plugins:
+  - name: go
+    out: api
+    opt: paths=source_relative
+    path: bin/protoc-gen-go
+  - name: connect-go
+    out: api
+    opt: paths=source_relative
+    path: bin/protoc-gen-connect-go
+  - name: go-grpc
+    out: api
+    opt: paths=source_relative
+    path: bin/protoc-gen-go-grpc

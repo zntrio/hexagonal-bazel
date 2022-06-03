@@ -50,7 +50,7 @@ func main() {
 	defer conn.Close()
 
 	// Create grpc client
-	dsClient := urlshortenerv1.NewShortenerAPIClient(conn)
+	dsClient := urlshortenerv1.NewShortenerServiceClient(conn)
 
 	// Set default handlers
 	r.NotFound(router.NotFound(templates))

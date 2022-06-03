@@ -11,7 +11,7 @@ import (
 )
 
 // Home handles link resolution from the browser
-func Home(shortener urlshortenerv1.ShortenerAPIClient, templates *template.Template) http.HandlerFunc {
+func Home(shortener urlshortenerv1.ShortenerServiceClient, templates *template.Template) http.HandlerFunc {
 	var displayError = func(w http.ResponseWriter, r *http.Request, err error) {
 		if err != nil {
 			st := status.Convert(err)
